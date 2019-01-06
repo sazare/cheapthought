@@ -1,0 +1,75 @@
+\documentclass[10pt, oneside]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{量子と論理}
+\author{H2nI3sc}
+\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{何を書きたいか}
+\subsection{意図}
+
+量子によってこの世界に 結晶が存在することの説明ができるという話に感銘をうけてしまった。
+
+離散的な概念は、世界が波動でできていることによるのだとすると、
+論理という離散的な概念もまた、波動に基づくのだろうか。
+
+そもそも自然数が、世界が波からできていることの帰結だということができるのだろうか。
+
+2値の真偽値は、節が1つある定在波?
+
+混乱
+
+% \include{"definition"}
+
+\section{基本的な事実}
+\begin{description}
+\item[ literal ] resolventに出現するリテラルはすべて、input clauseのリテラルのインスタンスである。
+\item[ 変数 ] resolventに出現する変数は、すべてinput clauseの変数に起源をもち、証明木の上で、変数は減少していく。(二つの部分証明が合わさった時、parent clauseと個々に比較すると変数は増えるが、全体としてみると変数が増えることはありえない。
+
+\end{description}
+
+\section{論理とterm}
+2つのunit clauseをresolved uponして$\cont$を作ったとき、何がおきているのか
+
+$$<L_1:L_2> = \cont\{x \leftarrow t\}$$
+
+$=$で結んだが、右辺から左辺を構成するには情報が不足(述語記号や引数の順番や対応など)しているので
+左から右へは不可逆な変換になっている。
+
+
+
+\section{+Pと-P}
++Pと-Pが証明できて矛盾するのであり、単独に存在する +Qや-Qは矛盾しない。
+
+時間を考えると、未来において $\bar{Q}$が出現するかもしれない。
+
+
+
+
+
+\end{document}
+
+
