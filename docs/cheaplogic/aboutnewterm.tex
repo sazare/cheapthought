@@ -1,0 +1,226 @@
+\documentclass[10pt, oneside]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{新しい項システムについて}
+\author{H2nI3sc}
+\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{何を書きたいか}
+\subsection{意図}
+Termとsubstitionの新しいシステムを考えた。
+変数のbindingの考え方を変える。
+影響範囲は、termのunificationまで(?)
+
+誰が得をするのかがよくわからないが、このほうがシンプルになるので、どうなるのかを知りたい。
+
+\section{Term,項の定義}
+\subsection{Symbol}
+Symbolは、基本の単語であり、かっこなどを含まない。
+
+例
+$x,y,a,b$
+
+\subsection{Term}
+\begin{eqnarray*}
+term := symbol | \\
+symbol (term,...)
+\end{eqnarray*}
+
+一階述語では、$\forall$や$\exists$によってbindされることで変数を指定するが、ここでのtermではその区別はない。
+
+\section{代入, Substitution}
+symbol xと項tが与えられるとき、代入は$\substset{x}{t}$と書く。
+代入は$\sigma$で表すことが多い。
+
+この$x$の場所に書かれる記号を変数と呼ぶ。
+
+代入が変数を決定する。
+
+項と代入の演算は$t \apply \sigma$である。
+次のように定義される。
+\begin{eqnarray}
+  t = x \apply \substset{x}{t} \\
+  x = s \apply \substset{x}{t} && if \, x \neq s
+\end{eqnarray}
+
+また、$\bar{v}$を変数のベクトル、$\bar{t}$をtermのベクトルとするとき、 $\subst{\bar{v}}{\bar{t}}$とも書く。
+ここのベクトルは記号の並びということ。
+
+特に、
+$$\substset{x}{x}$$
+は変数のbindingを定義する代入であり、$\eset{\self{x}}$とも書く。
+
+また、bindingは$\emptysubst$でも表し、変数を明示する必要があれば
+$$\emptysubst_{x,y}$$
+などと書くつもりだが、たぶんそのような記法は使わないだろう。
+
+言い換えると、
+$$t_0 \apply \sigma$$
+は、$t_0$に出現する$v$を$t$で置き換えた記号列を作る操作である。
+
+代入のもう一つの表現として
+$$\sigma [t] = t \apply \sigma$$
+と定義する。
+これは、symbolに対する$\sigma[v]$の拡張になる。
+
+$\sigma [t]$の定義は次の通り。
+\begin{eqnarray*}
+\sigma[t] := \sigma[t] &&if \,t  \, is \, a \, symbol  \\
+\sigma[t] := \sigma[f](\sigma[t_1], ...) &&if \, t=f(t_1,...)
+\end{eqnarray*}
+
+また、項の同値関係$t_1 \approx t_2$を、あとで定義する。***
+$$ \sigma_1 \apply t_1 \approx \sigma_2 \apply t_2$$
+
+変数を除いて同じというような意味にしたい。
+
+\subsection{代入の演算}
+また、代入間の積を次のように定義する。
+
+$$\{\subst{x}{t}\} \apply \sigma_2 = \{\subst{x}{t \apply \sigma_2}\}$$
+
+$\sigma = \sigma_1 \apply \sigma_2$は、代入を順番に適用した結果になる。つまり、任意の項$t$について
+$$ t \apply(\sigma_1 \apply \sigma_2) \approx (t \apply \sigma_1) \apply \sigma_2$$
+となる。
+
+
+この$\apply$では、$\sigma_1$と$\sigma_2$に共通の変数がある場合、$\sigma_2$のその変数への代入は無視される。
+
+例)
+$$\{x\leftarrow t\} \apply \{x \leftarrow s, y \leftarrow u\} = \{x \leftarrow t, y \leftarrow u\}$$
+
+\subsection{変数}
+代入$\sigma$が与えられた時、その代入が決める変数を定義する。
+
+$$\mathbf{V}(\sigma) = \{ v | \substset{v}{*} \in \sigma \}$$
+
+
+代入を実行すると、対象の項からはその変数が消えてしまうので、項に注目するとその変数は存在しなかったりするが、操作としての代入にとっては意味がある。
+
+\section{項のunification}
+項$t,s$とbinding$sigma$があるとき、unificationを$\sigma<t:s>$と表記する。
+
+unificationは代入を計算するが、代入が求められない場合は未定義($\undet$)の値をとる。
+(Juliaの実装では、値ではなく例外を返す)
+
+代入$\sigma$が$\emptysubst$の場合、これは通常のunificationとなる。
+$$<t:s> = \emptysubst <t:s>$$
+
+\subsection{不変量 $\spadesuit$}
+$\spadesuit$は疑問のあるセクション
+
+代入と項のペア$(\sigma, t)$はunificationの処理の進行途中での不変量になるようなきがする。
+項t,sのunificationによってmgu $\sigma$が得られたとする。
+そして$r=t \apply \sigma = s \apply \sigma$の場合、
+$$(\sigma, r)= <t:s>$$
+と書く。
+
+$(t^{'}, s^{'}) \sqsubset (t,s)$を2つの表現の間のパラレルな包含関係と定義する。
+
+$(t^{'}, s^{'}) \sqsubset (t,s)$であり、$t^{'} \neq s^{'}$のときこの$(t^{'}, s^{'})$をdisagreement setと呼ぶ。
+
+代入$\sigma$のもとで、disagreement set $(t^{'},s^{'})$の片方が変数である場合(ここでは$t$が変数だとする)に
+$\sigma^{'} = \substset{t}{s}$
+を定義すると
+$$\sigma<t:s> = (\sigma \apply \sigma^{'})<t:s>$$
+である。(本当か??)
+
+\subsection{disagreement setと代入 $\spadesuit$}
+また、disagreement setを解消していくと、tとsの部分項のシーケンスができる。
+$$t \supset t_1 \supset t_2 \supset \dots \supset t_k$$
+$$s \supset s_1 \supset s_2 \supset \dots \supset s_k$$
+
+それぞれのdisagreement setについて$\sigma_i$という代入を作ったとすると、
+$$ <\sigma_i:\sigma_{i+1}><t_{i+1}:s_{i+1}> = \sigma_i  \apply  <t_i:s_i> \apply \sigma_{i+1}$$ 
+みたいな関係になる。はず。
+
+また、$(t,s)$のすべてのdisagreement setを$\Delta$と書く。
+これらのdisagreement setからそれぞれ求められた代入を$\sigma_i$と書くとき
+$$\sigma = <\dots<<\sigma_1:\sigma_2>:\sigma_3>:\dots >: \sigma_k>$$
+になるのではないか
+
+
+\subsection{代入はunification}
+代入$\sigma$が1引数をとると、代入の適用になるが、2引数をとるとunificationになる。
+
+\begin{eqnarray*}
+\sigma(t) = t \apply \sigma \\
+\sigma(t,s) = \sigma<t:s>
+\end{eqnarray*}
+
+\section{代入のunification}
+mguは代入の一種だが、二つのterm $t_1,t_2$があったとき、それを同じにする代入の中で最も一般的なものである。
+この操作をtermの間のunificationと呼ぶ。
+ここでは、次のように表記する。
+$$<t_1:t_2> \iff \sup\{\mu t_1\apply \mu = t_2\apply \mu\}$$
+
+さらに、2つの代入の間のunification操作を次のように定義する。これは例であり、完全な定義は未。
+
+$$<\{x\leftarrow t\}: \{x \leftarrow s\}> \iff \{x \leftarrow <t:s>\}$$
+
+これによると
+$$<\{x \leftarrow f(y), y \leftarrow y \}: \{x \leftarrow f(a)\} >= \{x \leftarrow f(a), y \leftarrow a\}$$
+
+となる。
+
+
+\section{代入のunificationの意味}
+代入のunificationは、代入の間の$\apply$操作と型は同じだが、後者はシリアルな積であり、前者はパラレルな積になる。
+
+その意味は、代入への代入と異なり、同じ変数への代入があったとき、片方の代入を無視しない。
+
+\subsection{変化する項}
+termの変化というものについて考える。
+
+時間を$t_1,t_2,t_3,t_4$とし、termのシーケンスがあるとする。
+$$s_{t_1}, s_{t_2}, s_{t_3}, s_{t_4}$$
+
+ このとき、隣り合うtermのmguは、2つのtermの差を表している。
+\begin{eqnarray*}
+ \sigma_{1,2} = <s_{t_1}:s_{t_2}>\\
+ \sigma_{2,3}= <s_{t_2}:s_{t_3}>\\
+ \sigma_{3,4}= <s_{t_3}:s_{t_4}>\\
+\end{eqnarray*}
+
+そして、これらのmguの間のmguを求めると、それは差の差を表していると考えられる。
+\begin{eqnarray*}
+ \mu_{1,2,3} = <\sigma_{1,2}:\sigma_{2,3}>\\
+ \mu_{2,3,4} = <\sigma_{2,3}:\sigma_{3,4}>\\ 
+\end{eqnarray*}
+
+\section{unification $\spadesuit$}
+項$t,s$のunificationを$unification(t,s)=(\sigma, r)$と書くとする。
+
+ここで、
+$r = t \apply \sigma = s \apply \sigma$
+である。
+
+不変量にもっていきたいのだけれど、
+この定義だと、ちょっと話が展開しないような。
+
+\end{document}
+
+
