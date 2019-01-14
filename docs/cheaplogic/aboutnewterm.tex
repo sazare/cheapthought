@@ -27,37 +27,70 @@
 
 \begin{document}
 \maketitle
+$\spadesuit$は疑問のあるセクション
+
+\section{作業中}
+
+\subsection{代入操作}
+ $\sigma_1 \apply \sigma_2$の定義はよくできている。
+
+ただし、$\eset{\self{x}}$がおかしくしていないか。
+
+その性質をちゃんと理解しているかどうか。
+
+
+\subsubsection{$\sigma$と$t$の順番とは}
+$\sigma[t] = t \apply \sigma$ は成り立つと思うのだが、それは項になる。
+
+
+\subsection{merge}
+
+
 
 \section{何を書きたいか}
 \subsection{意図}
-Termとsubstitionの新しいシステムを考えた。
+Termとsubstition(代入)の(たぶん)新しいシステムを考えた。
 変数のbindingの考え方を変える。
-影響範囲は、termのunificationまで(?)
 
 誰が得をするのかがよくわからないが、このほうがシンプルになるので、どうなるのかを知りたい。
+
+
 
 \section{Term,項の定義}
 \subsection{Symbol}
 Symbolは、基本の単語であり、かっこなどを含まない。
 
-例
-$x,y,a,b$
-
-\subsection{Term}
+定義
 \begin{eqnarray*}
-term := symbol | \\
-symbol (term,...)
+<symbol> : symbol
+\end{eqnarray*}
+
+例
+$$ x,y,a,b$$
+\subsection{Term}
+定義
+\begin{eqnarray*}
+<term> \  ::= &&<symbol> | <symbol> (<term>,...)
 \end{eqnarray*}
 
 一階述語では、$\forall$や$\exists$によってbindされることで変数を指定するが、ここでのtermではその区別はない。
+
+例
+$$x,y, f(x), g(a,x)$$
+
+\subsection{項の関係}
+\subsubsection{部分表現}
+項$s$が$t$の、$(t_1,s_1)$が$(t,s)$の部分表現であることを次のように表記する。
+\begin{eqnarray*}
+t \sqsupset s  \\
+(t_1, s_1) \sqsupset (t,s)  &: &  t_1 \sqsupset t \land s_1 \sqsupset s  \,, respectively
+\end{eqnarray*}
 
 \section{代入, Substitution}
 symbol xと項tが与えられるとき、代入は$\substset{x}{t}$と書く。
 代入は$\sigma$で表すことが多い。
 
 この$x$の場所に書かれる記号を変数と呼ぶ。
-
-代入が変数を決定する。
 
 項と代入の演算は$t \apply \sigma$である。
 次のように定義される。
@@ -66,39 +99,52 @@ symbol xと項tが与えられるとき、代入は$\substset{x}{t}$と書く。
   x = s \apply \substset{x}{t} && if \, x \neq s
 \end{eqnarray}
 
-また、$\bar{v}$を変数のベクトル、$\bar{t}$をtermのベクトルとするとき、 $\subst{\bar{v}}{\bar{t}}$とも書く。
+代入は、$t$に出現する$v$を$t$で置き換えた記号列を作る操作である。
+項自体は変数という概念を持たず、代入が変数を決定する。
+
+表記上、$\bar{v}$を変数のベクトル、$\bar{t}$をtermのベクトルとするとき、 $\subst{\bar{v}}{\bar{t}}$とも書く。
 ここのベクトルは記号の並びということ。
 
-特に、
+代入が変数を決定するのだが、特に、
 $$\substset{x}{x}$$
-は変数のbindingを定義する代入であり、$\eset{\self{x}}$とも書く。
+は変数のbindingのみを定義する代入であり、$\eset{\self{x}}$とも書く。
 
 また、bindingは$\emptysubst$でも表し、変数を明示する必要があれば
 $$\emptysubst_{x,y}$$
-などと書くつもりだが、たぶんそのような記法は使わないだろう。
+などと書くつもりだが、たぶんそのような記法はこの後の部分では使わないだろう。
 
-言い換えると、
-$$t_0 \apply \sigma$$
-は、$t_0$に出現する$v$を$t$で置き換えた記号列を作る操作である。
 
 代入のもう一つの表現として
 $$\sigma [t] = t \apply \sigma$$
 と定義する。
-これは、symbolに対する$\sigma[v]$の拡張になる。
+
+これは、代入が項を変換する関数であるという見方になる。
+
+symbolに対する$\sigma[v]$はあらかじめ定義されているので、$\sigma[t]$はそれを項目に自然に拡張した機能になる。
+
+代入操作の適用の別表現でもある。
 
 $\sigma [t]$の定義は次の通り。
 \begin{eqnarray*}
-\sigma[t] := \sigma[t] &&if \,t  \, is \, a \, symbol  \\
-\sigma[t] := \sigma[f](\sigma[t_1], ...) &&if \, t=f(t_1,...)
+\sigma[t] := \sigma[v] &&if \: t \, is \, a \, var \, v \\
+\sigma[t] := \sigma[f](\sigma[t_1], ...) &&if \: t=f(t_1,...)
 \end{eqnarray*}
 
-また、項の同値関係$t_1 \approx t_2$を、あとで定義する。***
+また、項の同値関係$t_1 \approx t_2$を、あとで定義する。$\spadesuit$
 $$ \sigma_1 \apply t_1 \approx \sigma_2 \apply t_2$$
 
 変数を除いて同じというような意味にしたい。
+必要なければ定義しないが・・・どうかな。
 
-\subsection{代入の演算}
-また、代入間の積を次のように定義する。
+
+\subsubsection{インスタンス}
+項$s$が項$t$のインスタンスであるとは、ある代入$\sigma$が存在し
+$$t \geq s \iff \exists \sigma\, t = s \apply s$$
+となることと定義する。
+
+
+\subsection{代入間の演算}
+また、2つの代入$\sigma_1, \sigma_2$の間の合成を次のように定義する。
 
 $$\{\subst{x}{t}\} \apply \sigma_2 = \{\subst{x}{t \apply \sigma_2}\}$$
 
@@ -112,16 +158,54 @@ $$ t \apply(\sigma_1 \apply \sigma_2) \approx (t \apply \sigma_1) \apply \sigma_
 例)
 $$\{x\leftarrow t\} \apply \{x \leftarrow s, y \leftarrow u\} = \{x \leftarrow t, y \leftarrow u\}$$
 
+JuliaのDictは代入に似ていて、$merge(d_1,d_2)$はこの操作に似ているが、同じ変数があったときの処理が逆になる。
+$$merge(\sigma_1,\sigma_2) == \sigma_2 \apply \sigma_1$$
+
+
+\subsection{基本的な性質}
+定義から、
+
+$$t  \geq t \apply \sigma$$
+
+代入の合成は可換ではない。つまり、
+$$ \sigma_1 \apply \sigma_2 = \sigma_2 \apply \sigma_1$$
+とは限らない
+
+例 1
+$$\substset{x}{a} = \substset{x}{a} \apply \substset{x}{b}$$
+$$\substset{x}{b} = \substset{x}{b} \apply \substset{x}{a}$$
+パラレルな合成の場合はどちらもfailする。
+
+例 2
+$$\eset{\subst{x}{f(b)},\subst{y}{b}} = \eset{\subst{x}{f(y)},\subst{y}{b}}\apply \substset{y}{a}$$
+$$\eset{\subst{x}{f(a)},\subst{y}{a}} = \substset{y}{a} \apply \eset{\subst{x}{f(y)},\subst{y}{b}}$$
+これも例1と同じか。
+
+例 3
+
+(作成中)
+
 \subsection{変数}
-代入$\sigma$が与えられた時、その代入が決める変数を定義する。
+代入$\sigma$が与えられた時、その代入が決める変数の集合を定義する。
 
 $$\mathbf{V}(\sigma) = \{ v | \substset{v}{*} \in \sigma \}$$
 
 
-代入を実行すると、対象の項からはその変数が消えてしまうので、項に注目するとその変数は存在しなかったりするが、操作としての代入にとっては意味がある。
+代入を実行すると、対象の項からはその変数が消えてしまうので、項に注目するとその変数は存在しないことになるが、操作としての代入にとっては意味がある。
+たとえば、resolutionでresolventに残るリテラルに対して代入を適用するとき、それらの変数こそが必要である。
+
+\subsubsection{全変数の集合}
+全変数の集合($\mathbf{V}$)を考えると、すべての代入の長さが同じになるので、話が簡単になりそうな気はする。
+同じ変数のindexが同じになるので、変数はindexで表せ、変数を探す処理が単純になる(今考えているように、JuliaのDictを使えば、もともと計算量はそれほど大きくないので、メリットはないだろう)
+
+しかし、resolutionのように、変数がどんどん増えていく場合、$\mathbf{V}$は無限集合になる。
+
+処理を考えている場合は、1つのresolutionの間は固定長さになるだろう。
+
 
 \section{項のunification}
-項$t,s$とbinding$sigma$があるとき、unificationを$\sigma<t:s>$と表記する。
+項$t,s$と代入$\sigma$があるとき、unificationを$\sigma<t:s>$と表記する。
+この代入は、$t,s$の変数のbindingを定義するだけでなく、$t,s$に出現していない変数のbindingを含みうる。
 
 unificationは代入を計算するが、代入が求められない場合は未定義($\undet$)の値をとる。
 (Juliaの実装では、値ではなく例外を返す)
@@ -130,7 +214,6 @@ unificationは代入を計算するが、代入が求められない場合は未
 $$<t:s> = \emptysubst <t:s>$$
 
 \subsection{不変量 $\spadesuit$}
-$\spadesuit$は疑問のあるセクション
 
 代入と項のペア$(\sigma, t)$はunificationの処理の進行途中での不変量になるようなきがする。
 項t,sのunificationによってmgu $\sigma$が得られたとする。
@@ -187,7 +270,7 @@ $$<\{x \leftarrow f(y), y \leftarrow y \}: \{x \leftarrow f(a)\} >= \{x \leftarr
 となる。
 
 
-\section{代入のunificationの意味}
+\subsection{代入のunificationの意味}
 代入のunificationは、代入の間の$\apply$操作と型は同じだが、後者はシリアルな積であり、前者はパラレルな積になる。
 
 その意味は、代入への代入と異なり、同じ変数への代入があったとき、片方の代入を無視しない。
@@ -220,6 +303,29 @@ $r = t \apply \sigma = s \apply \sigma$
 
 不変量にもっていきたいのだけれど、
 この定義だと、ちょっと話が展開しないような。
+
+\begin{eqnarray*}
+\sigma &=&<t,s>\\
+t \apply \sigma &=& s \apply \sigma
+\end{eqnarray*}
+
+\section{disagreement set}
+うまく定義できるだろうか。
+まだ必要かどうか不明。
+
+項$t,s$のdsagreement set $\Delta(t,s)$の定義。
+
+$\Delta(t,s) = \eset{(d_t, d_s) : t \sqsupset d_t \land s \sqsupset d_s \land 
+ \exists \delta (d_t \apply \delta \land d_s \apply \delta) \land
+  ((d_1,d_2) \in \Delta(t,s) \to \nexists (d_1^{'},d_2^{'}) \sqsupset (d_1,d_2)})\}$
+
+また、$t,s$から1つのdisagreement setを取り出す関数$\delta$があるとする。
+$$\delta(t,s) = (d_{t_1}, d_{s_1})$$
+$\Delta$集合のどの要素を選ぶのかは決めない。
+選択する順番によって形が違ってくることにも注意。
+
+(ここにmgu構成の処理の流れの画像がはいる)
+
 
 \end{document}
 
