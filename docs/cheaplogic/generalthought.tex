@@ -1,0 +1,280 @@
+\documentclass[10pt, oneside]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{全体について}
+\author{\myname}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+$\spadesuit$は疑問のあるセクション
+\newpage
+
+\section{何を書きたいか}
+\subsection{意図}
+\begin{description}
+\item[ 4つの世界] 証明内、全証明、公理集合、公理集合の時系列 
+\item[ 差分と普遍性] 変化を差分で捉え、普遍性をさがす
+\item[ 法則について] 公理集合はFactとRuleからなると考えると、法則はどこから?
+\end{description}
+
+
+
+\section{4つの世界}
+\subsection{証明内の構造}
+たとえば、リテラル$L_i$は入力時の$L^0_i$が、resolutionによってmguをかけられて$L^p_i$になり、
+最終的にどこかで対消滅して消える。消える直前をkとすると$L^k_i$が最後になる。
+
+$$L^0 \to^{\sigma_0} L^1 \to^{\sigma_1} \dots \to^{\sigma_{k-1}} L^k$$
+
+であるとするならば、これはグラフとmguによって律せられている。
+
+Literalの変化、mguの変化を観察する必要がありそう。
+
+\subsection{差分}
+termの変化はmguでありこれを一階の差分と考えると、mguのmguが二階の差分になる。
+
+たとえば、$(1) = \bar{P}(x)P(f(x))$というループの場合、
+一階の差分はmgu$<1:1> = \substset{x}{f(x)}$
+であり、二階の差分は$\emptysubst$となる。
+
+これにより、この式(1)で定まる$\subst{x}{f(x)}$は安定していて、fixed pointになっていると言えそう。
+
+1つの証明を考えると、入力リテラルが変化し消滅するまでのmguのシーケンスが考えられる。
+
+一方で、$\mathcal{A}_0,\mathcal{A}_1,\mathcal{A}_2,\dots$という時系列が与えられた時、あるclauseが時系列を通して同じものだと判定できたとすると、同じ位置にあるtermの変化を考えることができる(同じliteralなので)
+
+$$L^0_i(t^0),L^0_i(t^1),L^2_i(t^2),L^3_i(t^3),L^4_i(t^4),\dots$$
+$$ t^0, t^1, t^2, t^3, t^4, \dots$$
+$$ \sigma^{01}_1, \sigma^{12}_2,\sigma^{23}_3, \sigma^{34}_4, \dots$$
+$$ \Delta\sigma_{12},\Delta\sigma_{23},\Delta\sigma_{34},\dots$$
+
+ここで
+\begin{eqnarray*}
+\sigma^{ij}_k = <t^i:t^j> \\
+\Delta\sigma_{ij} = <\sigma_i:\sigma_j>
+\end{eqnarray*}
+
+
+\subsection{全証明の構造}
+複数の証明$\mathcal{P}_i$と$\mathcal{P}_j$の関係は何があるのか。
+
+ある証明によって、他の証明が不要になることはあるか?
+
+どのような証明がprincipalなのか?
+
+といったこと
+
+\subsection{証明のインスタンス関係}
+証明$\mathcal{P}_1$と$\mathcal{P}_2$が与えられた時、
+これらのインスタンス関係を定義するのは難しい。
+そもそもインスタンス関係は変数を含む必要があるが、証明のステツプを変数として表現できないから。
+
+\subsection{証明の表現}
+グラフで考えると、グラフを正規表現のように表したとして、簡単のためliteralだけを書くとすると
+clauseの集合が
+$$1.+P-Q, 2.+Q+R, 3.-R,-P$$
+で、この順番にliteralに番号が振られている場合、ここから得られるリニアな反証は
+$$(23)(45)(61)$$
+と書ける。
+
+これに反復を含めたclause集合(命題で書くのはここの議論ではmguは重要ではないから)
+$$1.-P+Q, 2.-Q+Q, 3.+P,4.-Q$$
+に対しては
+$$(3,1)(2,3)^k,4$$
+のようなシーケンスとして書ける。このkは$0,1,2,\dots$の値をとれるので
+ひとつの塊とみなせる。
+とすると、この$x^k$の部分が変数になるので、同じパターンで$k$のより大きなものが小さいもののインスタンスと考えられるはず。
+
+\subsection{公理集合とconjecture}
+
+公理集合が決まると、全証明が決まる。
+
+公理集合とconjectureの関係は何か?
+
+公理が、現実世界(あるいはモデル)についてのなんらかの表明であると考えると、
+公理集合は、FactとRuleの2タイプの記述からできている。
+
+そのモデルで直接成り立っていると観察される命題がFactである。
+Factはground instanceに対する命題になる。
+
+Factには次のような式は含まれない。これらはRuleである。
+\begin{description}
+\item[ 1] $+P(a) \lor +P(b)$
+\item[ 2] $+P(f(a))$
+\item[ 3] $\forall x.+P(x)$
+\item[ 4] $\forall x.+P(x) \to +Q(x)$
+\item[ 5] $\exists x.+P(x) $
+\end{description}
+
+2の関数fは、あらかじめ人間が定義したものでなくてはならない。
+NNが関数を学習することはないから。
+
+3,4のように変数を含む式は、モデルが無限になりうる。
+2の場合、Hは無限集合になり、$f(f(...(f(a))))$の形のtermにあふれているが、$f(a)$が具体的にNNで定数として認識できるものならば、Factと呼べる。
+一方で、fが未知であったり、NNが$f(a)$を学習できなければ、そもそも真にはなりえないので、Factにはなりえない。このような式を公理集合に含めるかどうかの判定は誰が行えるのか。
+
+NNとLogicの間の関係
+
+\subsubsection{FactからRule}
+$$ Data \to Fact \to Rule \to Logic$$
+
+$ Data \to Fact$はNNが実行する。
+$ Rule \to Logic$は、RuleをFactに適用して正しいかどうかを判定することを意味する。
+
+では、Ruleは誰が作るのか?
+
+無数のFactから、Ruleを導くという仕事がある。
+
+\begin{description}
+\item[ 1] NNがRuleをモデル化できるのか?
+\item[ 2] FactからRuleを発見するロジック(帰納論理?)はあるのか?
+\end{description}
+1については、法則を見出す　で検討する。
+
+\subsubsection{法則を見出す}
+NNによる学習モデル(多層)から、述語を作り出せるのか。
+
+入力データと出力層のカテゴリーの関係として述語化ができたとしても、そこにルールはない。
+$$ NN \to Model \to Axioms$$
+
+入力データ(X)と出力層のカテゴリー($C_i$)は、NNによって
+$NN(X) \to Prov(C_i)$のような関係としてモデル化される。
+そこで、2つの方法が考えられて、
+1つ目は、閾値($\tau$を導入し、$Prov(C_i) \geq \tau$のとき、述語$+P_i(x)$がなりたち
+$Prov(C_i) < \tau$のとき$-P_i(x)$とするか、否定は含めないか、によって公理系を作成する。
+2つ目は、$+P_i^{Prov(C_i)}(x)$のように確率を扱うロジックにするか。
+
+2つ目は、$+P(Prov(C_i), x)$という形に変形し、確率は確率の公理を導入するという方法もありそう。
+
+1つ目については、入力データと出力層のカテゴリの関係がうまく定義できるかどうかを確認する必要がある。
+
+いずれにせよ、入力層と出力層のカテゴリの間の述語化ができたならば、
+たとえば、CNNのモデルのi層が概念の集合であるならば、i層からk層への遷移を述語化できるはずで、
+それは推論を表す公理になる。(機械学習でいう「推論」の論理への移し変えだろう)
+
+出力層をFactとし、途中の推論がRuleになると考えられる。
+
+\subsubsection{法則発見ゲーム}
+これは、カードゲームのエリューシスをNNで学習できるかという問題ではないだろうか。
+
+単純化すれば、数字の列が与えられて、次の数を予測するNNモデルが作れるかということ。
+
+こう書くと、NNにもできそうな気がする。
+RNNかな。
+
+どんな教師データを与えれば良いか??
+
+
+\subsubsection{Factのありかた}
+他のでも書いたはずだが、Factとして$+P(x)$のような肯定的なUnit Clauseしかないのか。
+
+NNで、否定を学習することができるのか。
+
+$\mathcal{A}$に$-P(a)$が含まれているとき、それは何を意味するのだろうか。
+
+同様にNNは$\forall x.+P(x)$を学習できるのか。
+これは、一見Factのようだが、Ruleである。
+
+
+\subsection{無限を生む表現}
+ある公理が$\forall$などの限量子を含むとき、それの表すモデルは有限の場合もあるし無限でなくてはならない場合もある。
+
+$\moda{A}$のエルブラン宇宙を$\herb{H}{\moda{A}}$とすると、$\herb{A}$が有限であるのに$\forall x$という場合、そのxは有限の上を走るだけであり、そとの世界から一般のことを考えると違っているように思うだろう。
+
+そとの世界というのは、NNで公理系を生成するような場合を考えていて、ある時点の公理系は有限かもしれないが、NNのモデルをベースに生成された公理系については、未来の公理系では有限であることは有限であることを意味しない。
+
+全定数が確定しないという意味でもあるし、なんらかの方法で関数記号が見出された場合は、そこで無限になる。
+
+NNで関数を学習できるだろうか。
+その場合、関数の定義を見つけ出せるだろうか。
+不可能だとしか思えないが、何か迂回する方法はあるかもしれない。
+
+
+\subsection{公理集合の時系列}
+\quote{Kripkiモデルなのかどうか? 様相論理的なことを表現したいわけではないのではないか}
+
+$\mathcal{A}_t \to \mathcal{A}_{t+1}$
+
+各$\moda{A}_t$に含まれる各言明$\phi(x)$について$\moda{A}_{t+1}$へ遷移したときどうなるか。
+
+その前に同じ言明であるとどう判定するのか?
+
+\begin{itemize}
+\item 生成
+\item 変化
+\item 消滅
+\end{itemize}
+
+証明内の構造でみたように、リテラルについても同じ変化が考えられ、ここではclause単位での変化になっている。
+
+時系列公理集合が与えられた時、その集合のシーケンスに対してどのような法則が成り立つかが重要。
+
+たとえば必ず成立していてほしい条件は次のとおり。
+\begin{description}
+\item[ 1] すべてのtについて、$\mathcal{A}_t$  は無矛盾
+\item[ 2] 各$\mathcal{A}_t$のFactは$P_1,P_2, \dots, P_k$の中から選ばれる。
+\end{description}
+1は成り立っていなければLogicだけでなく、NNを使って構成されるシステムも無意味になる。
+
+NNで教師付き学習であれば$P_1,P_2, \dots, P_k$はあらかじめ決まっているので2の条件は妥当。
+
+ここでは入力データを固定して考えているが、画像の一部分について(たとえば、画像の中の猫の部分について成り立つ述語、といったものがあれば、このような条件は成り立たない。
+
+その場合は、途中の層でカテゴリー間のFactとRuleになるので、話はもっと複雑になる。
+ここではそこまで深入りしない。そういう場合もありうるという話。
+
+個別の条件の例。
+
+たとえば、
+\item[ a] NNの観察する世界が矛盾しておらず、観察の間の間隔($t$と$t+1$の間の時間間隔)が十分に短ければ、
+$\mathcal{A}_t$と$\mathcal{A}_{t+1}$の各命題はそんなに違っていないはずだと考えられる。
+
+つまり、命題の増加や減少は少なく、$t$と$t+1$の公理集合の命題の間の対応もわかるだろうということ。
+
+\item[ b] 時間経過の間常に成り立つ命題があるとしたら、それはデータの同じ部分についてだろう
+
+
+\subsection{Factの形2}
+NNがある時点で$+P(a)$と$+Q(a)$の両方が高い確率で成り立つと判定した場合、
+NNの識別能力が低いからとも考えられる。
+
+たとえば、画像の中の異なる部分についての言明かもしれない。
+
+このとき次のどの命題も真となるので、一般化するとしたらどう考えればよいか。
+
+\begin{description}
+\item[ 1] $+P(a) \lor +Q(a)$
+\item[2] $+P(a) \land +Q(a)$
+\item[3] $-P(a) \lor +Q(a)$
+\item[4] $+P(a) \lor -Q(a)$
+\item[5] $+P(a) \iff +Q(a)$
+\item[6] $\forall x. +P(x)$ ただし、Hの定数はaのみ
+\item[7] $\exists x.+P(x)$
+\item[7] $\exists x.+Q(x)$
+\end{description}
+などなど無限にある
+
+
+\end{document}
