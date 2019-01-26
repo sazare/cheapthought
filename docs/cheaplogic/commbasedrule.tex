@@ -1,0 +1,92 @@
+\documentclass[10pt, oneside]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{最小規則による対話}
+\author{\myname}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{概要}
+人間の言語コミュニケーションとして、子供がコミュニケーションをまなんでいく過程や、まったく知らない言葉を話す環境で、人がどうその言語を学習していくのかを考えると、文法というものが先にあるわけではないことは明らか。
+
+ではどのようにコミュニケーションが成長していくのだろうか。
+
+面白そうな考えを思いついたので書いておく。
+
+\section{ルール}
+人が何かを話すとき、そこには「個人的な規則/ルール」がある。
+
+人間はそれが論理的であるかどうかにかかわらず、「ルール」を持っている。
+
+ある人にとっては非論理的なのかもしれないが、その人にとっては「ルール」がある。
+
+だとすれば、「ルール」は論理的であることを意味しないのだろう。
+
+ルールが矛盾している場合、人によってはそれが耐えられず、論理の側にルールを変更するかもしれないが、その人の信じる「論理」自体が正しいとは限らないので、人はやはり非合理の可能性をはらむ「ルール」に従う。
+
+なぜ「ルール」に従うのか。あるいは、なぜ「ルール」を持ち出すのだろうか。
+どうも「〜だから〜」というパターンのことをルールと呼ぶだけであり、それの論理的根拠などは気にしないように思う。それを「ルール」と呼ぶのか「理由」と呼ぶのかは好みの問題。
+
+つまり、パターン(フレームといっても良い)こそが人間の思考を形作る原理であり、正しさなどは二義的なものだ。
+
+そのような思考形態がもとにあるという前提で考えると、言語表現は基本的にこの個人的なルール(private grammer)に基づいて構成される。
+といっても、そのルールの全体像は明文化されている訳ではない。
+
+Aの言葉をBが理解する過程を想像する。
+
+Aのメッセージ$m_a$をBが自分のルールによって解読する。
+そのとき、自分のどのルールにも合わなければ、$m_a$は理解不能である。
+
+「ルールに合う」ということの意味が明確ではないが、ルール$r_b$が$m_a$の一部分にでも適用できて、Bがそれを$i_b$として解釈したとすると、もはや適用したルールは$r_{b_1}$と変わっているが、部分的に理解したことになる。
+そのとき、$m_a$の解釈できなかった部分は無視してもいい。
+その場の誰も、そんなことは気にしない。
+
+この$i_b$に基づいてBが自分の知識と照合し、ここにはない別の「行動目的」に沿って何か伝えたいこと$w_b$があったら、Bはそれをなんらかのルール$R_b$によってメッセージ$m_b$を合成し、Aに伝える。
+
+Aもまた同様の過程を行い、Aのもつルールから$m_b$に適用できる$r_{a_2}$を探して・・・ということになる。
+
+このように、使っているメッセージ$m_{a,b}$の全体を司るルール/文法$G_{a,b}$というものがなくても、AとBのコミュニケーションがなりたっていくはずである。
+
+
+
+\section{実装}
+このような考えに基づいた、コミュニケーションシステムを作ってみたい。
+
+必要なこと
+\begin{description}
+\item[ メッセージ] 文字列かS式でよさそう
+\item[ ルール]メッセージを解釈するルールと、
+\item[ 解釈]解釈して生まれるもの。動詞と名詞で同じ言葉を使う。
+\item[ 知識モデル] 解釈の集合が知識モデルだが、そこには構造があったりAPIがあったりする。
+知識は、推論できる仕組みが必要であり、矛盾の判定ができるといい。
+新しい仮説を立てることも必要。
+\item[ 行動原理]ある知識のもとで、自分がどのような発話をするかは、これらとは別の動機のシステムが必要である。
+以前考えたように、新生児は生きるための根源的な教師システムを持ち、自分の成長にともなって自己学習を続けていく。
+その過程で目的がより表層的になっていくのだと思う。
+そのようなシステムが必要だろうか。
+\item[ ]
+\end{description}
+
+
+\end{document}
