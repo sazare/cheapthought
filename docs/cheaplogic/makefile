@@ -1,9 +1,9 @@
 
-CLDOC=NNtoPred aboutlogic aboutnewterm aboutrefs aboutunifsubst commbasedrule generalthought howtowrite 
+CLDOC=NNtoPred aboutlogic aboutnewterm aboutrefs aboutunifsubst commbasedrule generalthought howtowrite commhowto
 CLTEX=${CLDOC:=.tex}
 CLPDF=${CLDOC:=.pdf}
 
-CLPDFDIR = ~/Projects/github/cheapthought/pdf/cheaplogic
+CLPDFDIR = ../../pdf/cheaplogic
 
 #all: 
 #	@echo doc: ${CLDOC} 
