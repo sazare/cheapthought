@@ -1,5 +1,5 @@
 
-CLDOC=NNtoPred aboutlogic aboutnewterm aboutrefs aboutunifsubst commbasedrule generalthought howtowrite commhowto
+CLDOC=NNtoPred aboutlogic aboutnewterm aboutrefs aboutunifsubst commbasedrule generalthought howtowrite commhowto whatissame
 CLTEX=${CLDOC:=.tex}
 CLPDF=${CLDOC:=.pdf}
 
@@ -13,3 +13,7 @@ CLPDFDIR = ../../pdf/cheaplogic
 
 public:
 	cp ${CLPDF} ${CLPDFDIR}
+
+clean:
+	rm *.aux *.log *.gz *.toc
+

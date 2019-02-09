@@ -1,0 +1,133 @@
+\documentclass[10pt, oneside]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{同じであるということ}
+\author{\myname}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{例}
+二つの表現が同じことを意味しているとはどういうことか。
+
+\begin{description}
+\item[ 0. キャベツの千切りが欲しい。]
+目的の表現。細部は除去されている。
+\item[ 1. 棚AからXを持ってきてまな板の上に置く。Xを包丁で細かく切る。
+それをX'とする。X'を皿に乗せる。] 
+操作の表現。レシピもこれかな。
+\item[ 2. キャベツを棚からとってきて千切りを作る。] 
+操作の1ステップの表現
+\item[ 3. キャベツの千切りを作る。] 
+目的の表現
+\item[ 4. 皿の上にキャベツの千切りがある。] 
+状態の表現
+\item[ 5. キャベツの千切りの乗った皿をテーブルに運ぶと、テーブルの上にキャベツの千切りの皿がある。] 
+推論の形をした手続きの表現
+\end{description}
+
+\section{同じ意味であるということの意味は?}
+そもそも同じではない。
+同じことなんてない。
+
+何かの基準があって同じだと思う。
+
+単語A,Bが同じだというのは、辞書を引けばある程度書いてある。
+
+専門用語については、その言葉を作った人の主観(特定の人々に共有される)による。
+
+ある表現は、文脈によって、複数の人々に了解される。
+文脈とは、discourseだが、その表現に使われている言葉に共通の意味のレイヤーかもしれない。
+意味のレイヤーは言葉に属さず、話者に属すかもしれない。
+
+
+二つの表現が同じ意味であるかどうかは、その表現の下位のレイヤーに戻っても、正確に定義できるわけではない。
+
+ということは、同じ文脈で、同じであるということが定義できるはずなのか。
+
+
+\subsection{目的は手段を選ばない}
+同じ目的を達成できれば、手段は問わないというとき、目的が同じかどうかで、その二つの手段は同一視されるだろうか。
+
+
+
+\subsection{同じ意味かどうかが問題になるのは}
+異なる文脈の表現が併置されたとき。
+
+ということは、与えられた二つの表現について、何が違うかがわかるということか。
+
+その違いがある上で、なお同じであると考える理由がある。
+
+\subsection{動機}
+なにかをやりたいという動機があって、表現の意味は決まってくる。
+
+動機は、ある概念のクラスターの中で意味を持つ。それを文脈と呼んでいる。
+
+意味が伝わるのは、文脈が共有されているときだけである。
+
+そして、文脈は、さぐりながら談話が続けられる。
+
+つまり、explicitに文脈が定義されるわけではない。
+
+\subsection{多相であること}
+人は文だけで情報を得ているわけではない。
+
+\subsection{独立したセンサー}
+五感から得られる情報が組み合わせられて、人間は意味を理解する。
+
+つまり、テキストだけから得られる情報では、世界を認識するのに不十分だということだ。
+
+NNの場合で考えると、入力は同じで、出力層のカテゴリが異なる定義の$NN_1, NN_2, \dots$が、それぞれ学習してモデル($M_1, M_2, \dots$)を作ったとする。
+
+このとき、同じデータに対して、各$NN_i$の判定するカテゴリのベクトル$(C_1,C_2,\dots)$に何か相関があるものだろうか。
+
+人間の五感は、独立なセンサーになっている。
+だから、それらのセンサーから得られるデータに相関があれば、それはそこに何かが存在する可能性が高いと考えられる。そのようにして存在とか固体という概念が作られていくのではないか。
+
+というような論理があるのではないか。
+あるいは、その仕組みの中で育ってきた私は、それを論理だと感じるだけかもしれない。
+
+だとすれば、上の$NN_i$は、同じ世界に対する独立な情報でないといけない。
+
+実際には同じデータであっても、NNの定義が異なれば独立になるということかも。
+
+世界から得られるデータの中のどの部分を見るかによる違いだとすれば、NNの例はそれほど間違っていないのかもしれない。
+\subsubsection{目と耳}
+独立なセンサーといっても、目と耳は2つずつある。
+
+同じデータに対するセンサーに相関があることは明らかだが、微妙にセンサーの間の距離があいていることで、その情報に差が生じ、その相関の差が意味を持つようになる。
+
+距離だったり方向だったりを知るための情報になる。
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
