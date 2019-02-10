@@ -1,0 +1,180 @@
+\documentclass[10pt, oneside]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{日本語にあった述語}
+\author{\myname}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{概要}
+例えば次の文を考える。
+\begin{description}
+\item[ 例文1] 僕は君が好き
+\end{description}
+
+これは次のように述語化できる。
+\begin{description}
+\item[ 述語化1.1] 好き(僕,君)
+\end{description}
+
+しかし、日本語では語順を変えることができるのて、
+\begin{description}
+\item[ 例文1'] 君が僕は好き
+\end{description}
+と修正したとき、これを述語化1.1に変換するのは面倒くさい。
+
+日本語で語順が変えやすいのは、助詞がその文法的な意味を肩代わりしていて、
+英語では語順で文法の意味を表しているということだと思う。
+
+
+
+そこで、助詞の「は」や「が」をキーワードとしたこのような書き方をしてはどうだろうか。
+\begin{description}
+\item[ 述語化1.2] 好き(は=僕,が=君)
+\end{description}
+こうすると、例文1'は次のようになる。
+\begin{description}
+\item[ 述語化1.2'] 好き(が=君,は=僕)
+\end{description}
+
+このような述語に対して、unifyを、キーワード「は」「が」での一致と考えると、語順が問題にならなくなる。
+
+キーワードを「助詞」と考えるのは、英文では文法のカテゴリーだと考えることに相当するので
+\begin{description}
+\item[ 例文1e] I love you.
+\end{description}
+
+は次のように変換できる。
+\begin{description}
+\item[ 述語化1e] Love(I, you)
+\item[ 述語化1.1e] Love(S=I, O=you)
+\end{description}
+
+こうなると、述語記号が動詞であるというのも、たまたまのような気がするので次のようにもかける。
+
+\begin{description}
+\item[ 述語化1.2e] Sent(I, love, you)
+\item[ 述語化1.3e] Sent(S=I, V=love, O=you)
+\end{description}
+ここでは、述語は文を表していると考えているが、それは、キーワードが文法の概念だからで自然ぢと思う。
+
+ここまでくると、データベースと似てきていて、列名がここのキーワードになる。
+
+DBの場合は、格納されたデータとQueryのマッチングを行うので、unificationとは異なるが
+マッチングするときはSQLを使うのであり、キーワードの順番は問題にならなくなっている。
+
+
+
+\subsection{論理式}
+次に論理式の場合を考える。
+\begin{description}
+\item[ 例文2] 君が僕にりんごを渡したので、僕はりんごを持っている
+\end{description}
+これは「渡す」「持つ」という述語を考えると次のような論理式になる。
+\begin{description}
+\item[ 述語化2] 渡す(が=君, に=僕, を=りんご) ⇒ 持つ(は=僕, を=りんご)
+\end{description}
+
+これを一般化するとこうなる。
+\begin{description}
+\item[ 述語化2] who1, who2, obj . 渡す(が=who1, に=who2 を=obj) ⇒ 持つ(は=who2, を=obj)
+\end{description}
+
+\begin{quotation}
+日本語のparseの手を抜くため、助詞を"ha", "ga", "ni"と書くとよさそう
+\end{quotation}
+
+\subsection{文法と叙述}
+このように、文法だけでは、叙述はできない。
+
+
+\section{実装}
+実装する場合、述語の引数をDict(Juliaの)として持てばよい。
+
+代入文もDictとする方法を先に考えたので、何もかもDictにできないのかなとは思う。
+
+\subsection{存在しない引数}
+今度は、「私はリンゴを食べる」という文からはじめる。
+\begin{description}
+\item[文1] 文(ha=私, wo=リンゴ, ru=食べ)
+\item[文2] [X]. 文(ha=私, wo=X, ru=食べ)
+\item[文3] 文(ha=私, ru=食べ)
+\end{description}
+
+文1は、「私はリンゴを食べる」という文だが、その「リンゴ」の部分を変数にすると文2になる。
+文1と文2をnifyすると$\{リンゴ \to X\}$ という代入が得られる。
+
+これを適用すると
+\begin{eqnarray*}
+文(ha=私, wo=リンゴ, ru=食べ) \bullet \{リンゴ \to X\} ==\\
+\forall X 文(ha=私, wo=X, ru=食べ)\bullet\{リンゴ \to X\} \\
+\end{eqnarray*}
+
+
+では「文3」のように「私は食べる」を述語化するとすると、unificationはどうなるべきか。
+
+「食べる」という述語には、ha-wo-ru の3つの要素が必要だと考えるならば、who=Xを補った「文2」が正しい述語化のように見える。
+文1と文3のunificationで、文に書かれていない変数Xが登場してよいのだろうか。
+
+あえて$wo=?$を補うのだとすると、$\{wo=リンゴ\}$が代入に含まれるということか。
+これは$\{リンゴ \to wo\}$ではない。
+
+代入は、文1と文3の両方に適用して、同じ文がでてくるものでなくてはならないので
+\begin{eqnarray*}
+文(ha=私, wo=リンゴ, ru=食べ) \bullet \{wo=リンゴ\} ==\\
+文(ha=私, ru=食べ)\bullet\{wo=リンゴ\} \\
+\end{eqnarray*}
+
+存在しない引数のリストに$\{wo=リンゴ\} $を適用すると、追加されるという規則になりそう。
+
+\section{はたしてどうか}
+日本語の述語化を考えたとき、語順を考慮して変換できるかどうか。
+
+「孤独な文法」で考えたように、それぞれが独自のルールを使うようなシステムでは
+parseの段階で、日本語文法を仮定したくなかったので、このようなことを考え始めた。
+
+助詞に注目するのは、助詞が頻繁に出現するので、それをparseのキーワードとすることに
+大きな違和感はなかったので、こちらのほうがよいと思えた。
+
+すなくとも、parseの段階で日本語文法を考慮し、その意味に基づいて引数順序を決めるのは好まない。
+
+この方式では、語順ではなく書かれた順番で述語の引数を書いていけば
+日本語の特殊なルールを考慮しなくてもよくなる。
+
+英文も同じようにキーワード付きにできるが、その場合、文法を考慮して順番を決めるだけなので
+あまりメリットはないと思う。
+
+また、DBのSQL文は、このような考えを持っていると思うが、先に書いたようにunificationがないので
+ここの話とは様相が違うだろう。
+
+DBは、FactとQueryに別れていて、論理式はQueryにしか書けない。
+
+DBの中にQueryを置くのはStored Programだろうか。
+
+Prologではないので、プログラムに相当する論理式はあるが、論理式はプログラムではない。
+
+
+
+
+\end{document}
