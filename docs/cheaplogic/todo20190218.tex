@@ -1,0 +1,120 @@
+\documentclass[10pt, oneside]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{僕のなすべきこと}
+\author{\myname}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{概要}
+\begin{description}
+\item[ モデルに基づく証明] Hをベースにして、$\mathcal{A}$ をground clausesの公理集合に展開し、証明する。
+無限集合になったときどうなるのか?
+\item[ $\mathcal{A}$の構造] 公理集合は、FactとDefinitionからなり、定理を導きたい・・・のか?
+\item[ NNの述語化の方法] NNの学習モデルを述語化できるか。そしてそれは有意義か?
+\item[ parryの移植] 
+\item[ 孤独な文法] 孤独な規則の成長と、コミュニケーションの成立までいけるか?
+人は自律的にルールを作る。ルールは矛盾してはいけないことに気づいていない。ルールが矛盾しているかどうかを気にしない。
+そういう野生のルールに基づいて、人はコミュニケーションを作り上げていく。
+\item[ 文法] 文法というものは孤独な文法を重ね合わせたもの。だから、例外が生まれる。すべての孤独な規則をひとつにまとめることはできない。
+
+\item[同じこと] 二つの表現が「同じこと」であると、どうやって判定するのか?
+語レベルの類似性とは別に、表現であらわす意味のなんらかのレベルでの類似性というのもある。
+文法も関係するし、観点や文脈といった主観も関係する。
+
+\item[ 証明の不変量] 二つの表現の差(disagreement set)とmguが、証明における不変量の元になるのではないか?
+
+\item[量子計算] 場の量子論にもとづく、量子計算であるとか、量子計算のシミュレーターであるとか
+
+\item[ロボット] 新生児の学習と成長を模倣してみる。
+
+\item[ まどかの公理] 書くことと問うことをどうとらえるか 
+\item[ 空腹と食事の公理] 空腹のシグナルから食事に行くまでの行動を推論できるかどうか?
+
+\item[ dvcの効果?] 評価
+\item[ hsubstの効果] 評価
+\item[ keyword述語の効果] それで公理を書けるか
+\end{description}
+
+\section{あれこれ}
+\subsection{有限と無限}
+NNであれ手書きであれ、公理は有限長であり、有限個しか書けない。
+
+変数を使うことで、無限の公理をひとつにまとめることができる。
+
+与えられた公理集合($mathcal{A}$)に対してエルブラン集合($H$)が対応する。
+公理集合が有限であっても$H$は有限であったり無限だったりできる。
+
+$\mathcal{A}$は有限だがHが無限である場合(たぶんたいていそう)、有限の世界$\mathcal{A}$での解釈と$H$での解釈の差が生まれる。
+
+\subsection{公理化の例}
+まどかは、いろいろややこしいので、公理化するよい例になるのではないかと思って、何度かためしている。
+事実を述語化していくのは興味深いが、公理ができたとして、何を証明したいのかがなかなかわからない。
+
+新生児の学習の例から、たとえば「空腹」という下位の層からの情報をもとに、レストランに行くという行動や
+レストランを探すという行動などが導かれないか。
+
+知識の公理集合があったとして、
+
+\subsection{導出}
+Resolutionを導出原理と訳しているが、「導出」というと、なんとなく新しいものが生まれてくる印象があるのだけれど
+conjectureの式は人間が書くので、新しい定理が生まれてくるのではない。
+新しいのは「証明」であり、「導出」の意味が「証明を導出すること」だといえばつじつまはあっているが
+注意しないと間違われるような気がする。
+
+\subsection{文法}
+文法がどうやって獲得されるのか?
+
+人間は、理由をつけようとする。
+三段論法は人間が何千年かの時間をかけてたどり着いた一つの形式だけれど、それを知らない人も自分の思考に理由づけをしようとする。
+さらに、その理由づけは正しいという必要性がない。
+
+理由づけの形式さえ揃っていればよいという思考は、最近だけのものだろうか。
+
+魔女狩り、異端審問などの理由づけを考えれば、昔からあったのではないかと思われる。
+
+人間は、自分で決めた規則に従って推論していくが、それが正しいかどうかは信じていても、客観的に正しいとは限らない。
+
+人と人がメッセージをやりとりする場合、そのメッセージの中で解釈できる部分をみつけ、それに基づいて
+メッセージを解釈する。
+その「みつける」部分は、個人的なルールに従う。
+そしてなんらかの行動をしたとき、相手から攻撃されなければ、そのルールは大丈夫だと判断される。
+
+このようにして、解釈のルールが成長していくのだろう。
+解釈のルールは発話のルールでもあり、このようにしてコミュニケーションが成長していくのだろう。
+
+だから、全員に共通する文法というのものは、あとで、それぞれの個人的なルールを推理し、ひとつにまーじしたものになる。
+
+だから、例外が存在することになる。
+
+人間がつくったルールはどれもそういうふうに作られていくのだろう。
+
+法律でもそうではないか。
+
+
+
+
+
+
+\end{document}
