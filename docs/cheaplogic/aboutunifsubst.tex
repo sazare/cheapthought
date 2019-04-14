@@ -52,13 +52,23 @@ $$t_0 \apply (\sigma_1 \apply \sigma_2) = (t_0\apply \sigma_1)\apply \sigma_2$$
 
 $$\{x\leftarrow t\} \apply \{x \leftarrow s, y \leftarrow u\} = \{x \leftarrow t, y \leftarrow u\}$$
 
+だから
+
+$$\sigma_1 \apply \sigma_2 \neq \sigma_2 \apply \sigma_1$$
+
+だが、もしも
+$$ V(\sigma_1)\and V(\sigma_2) = \emptyset$$
+ならば
+$$\sigma_1 \apply \sigma_2 = \sigma_2 \apply \sigma_1$$
+が成り立つ。
+
 %\include{"definition"}
 
 \section{代入のunification}
 mguは代入の一種だが、二つのterm$t_1,t_2$があったとき、それを同じにする代入の中で最も一般的なものである。
 この操作をtermの間のunificationと呼ぶ。
 ここでは、次のように表記する。
-$$<t_1:t_2> \iff \sup\{\mu \bar \,t_1\apply \mu = t_2\apply \mu\}$$
+$$<t_1:t_2> \iff \sup\{\mu \bar{t_1}\apply \mu = t_2\apply \mu\}$$
 
 さらに、2つの代入の間のunification操作を次のように定義する。これは例であり、完全な定義は未。
 

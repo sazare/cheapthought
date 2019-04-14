@@ -1,0 +1,139 @@
+\documentclass[10pt, oneside]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{Subst, apply and unify}
+\author{\myname}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+%\include{"definition"}
+
+
+\section{概要}
+$\subst{x}{f(x)}$がどこで拒絶されるのかを洗い直す。
+そのために、代入の定義から見直す。
+
+\section{定義}
+\subsection{Substitution}
+$\mathcal{V}$は変数記号の集合、$\mathcal{T}$はtermの集合とする。
+
+代入$\mathcal{Σ}$は、$\mathcal{\bar{V}}\times\mathcal{\bar{T}}$の部分集合。
+ただし、$\bar{X}$はXの要素のベクトルを示す。
+
+例)
+
+ここでは、変数記号は、$x,y,z$、定数記号は$a,b,c$とする。
+
+\begin{description}
+\item[$\subst{x}{x} $]  空代入
+\item[$\subst{x}{f(y)}$] 項の代入
+\item[$\subst{x}{f(x)}$] 代入の右辺が変数でなく、同じ変数を含む場合。
+\item[$\substset{(x,y)}{(f(y),g(y))}$] ベクトルの場合
+\end{description}
+
+\subsection{apply}
+\subsubsection{項へのapply}
+表現$E[x,y]$へのSubstitiontion$\subst{x,y,z}{s,t,u}$は、表現$E$に出現するすべての変数$x,y,z$を同時に並行に表現$s,t,u$に置き換える操作である。
+
+だから、Substitutionを変数ごとに$\eset{\subst{x}{t},\subst{y}{s}}$と表現せずに、$\subst{(x,y)}{(t,s)}$と表記する。
+
+もしも$\sigma=\emptyset$ならば、その値は空表現($\varLambda$)に縮退する。$E\sigma = \varLambda$と定義する。
+空表現は自身を含むすべての表現と等しくない。(無理か?)
+
+\subsubsection{代入へのapply}
+代入に対して代入を適用する操作は、unifyの処理中に発生するが、ここでは略す。
+
+\subsection{Unification}
+表現$t,s$のunificationを行う操作は、
+$unify(t,s)$または$\unify{t}{s}$と表記する。
+
+$σ=\unify{t}{s}$であるとき、
+$t\apply\sigma \equiv s\apply\sigma$
+が成り立つ。
+
+\section{性質}
+\subsection{nificationでは$\unify{x}{f(x)}$が発生しない}
+
+\proofname{1}
+
+$\sigma=\unify{x}{f(x)}$ならば、$x\apply\sigma = f(x)\apply\sigma = f(x\apply\sigma)$である。
+
+$\sigma$に変数$x$の代入$\subst{x}{s}$が含まれているならば、これは$s\equiv f(s)$であることを意味する。
+
+このとき、$s$は$f$で始まる表現であり、有限の記号列としてはそのような$s$は存在しないので、
+$\sigma=\unify{x}{f(x)}$は存在しない。
+
+\subsection{記号の無限列}
+次に、代入$\sigma_0=\subst{x}{f(x)}$を考える。
+記号の列
+$$x, x \sigma_0, x \sigma_0^2, x \sigma_0^3,\dots,x \sigma_0^k, \dots$$
+つまり
+$$x, f(x), f^2(x), \dots , f^k(x), \dots $$
+を考える。
+
+unification $sigma=\unify{t}{s}$は、二つの表現$t$と$s$の差を意味している。
+
+記号列の隣り合う記号の差$\unify{f^k(x)}{f^{k+1}(x)}$は、常に$\unify{x}{f(x)}$であり、記号列をどれだけ先に進んでも変化しない。
+
+このような代入を繰り返し適用してできる記号の列の収束というものは考えられないか。
+(これだけだと、有限か無限に続くかでしかないので、つまらない)
+
+\subsection{termのドメイン}
+
+項に対して、その変数に$\herbrand$の要素を代入してできる全ての項の集合を対応させる。
+$$[[x]] = \herbrand$$
+$$[[f(x)]] = \eset{f(e) : e \in \herbrand}$$
+
+この観点から、$\sigma=\subst{x}{f(y)}$に対して$$\rho(\sigma)=\frac{|[[f(x)]]|}{|[[x]]|}$$を考える。
+
+ここで、$|X|$は、集合Xのサイズとする。
+$$\rho(\sigma)=\frac{|f\herbrand|}{|\herbrand|}$$
+である。
+
+例1)
+$\mathcal{A} = \eset{+P(a),-P(x)}$
+
+$$\sigma=\unify{P(a)}{P(x)} = \subst{x}{a}$$
+$$\herbrand=\eset{a}$$
+なので
+$$\rho(\sigma)=\frac{1}{1}=1$$
+
+例2)
+任意の$\mathcal{A}$で、空の代入については
+$$\sigma=\unify{P(x)}{P(x)} = \subst{x}{x}$$
+なので
+$$\rho(\sigma)=\frac{\herbrand}{\herbrand}=1$$
+
+例3)
+$$\sigma=\unify{P(x)}{P(f(y))} = \subst{x}{f(y)}$$
+なので
+$$\rho(\sigma)=\frac{f\herbrand}{\herbrand} < 1$$
+
+この場合、
+
+
+
+
+
+\end{document}

@@ -1,5 +1,5 @@
 
-CLDOC=NNtoPred aboutlogic aboutnewterm aboutrefs aboutunifsubst commbasedrule generalthought howtowrite commhowto whatissame aboutJapanesePred todo20190218
+CLDOC=NNtoPred aboutlogic aboutnewterm aboutrefs aboutunifsubst commbasedrule generalthought howtowrite commhowto whatissame aboutJapanesePred todo20190218 substapplyunify provingandrefutation
 CLTEX=${CLDOC:=.tex}
 CLPDF=${CLDOC:=.pdf}
 

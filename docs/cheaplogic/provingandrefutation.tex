@@ -1,0 +1,80 @@
+\documentclass[10pt, oneside]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{証明と反証、全称と存在}
+\author{\myname}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{概要}
+反証で証明を作る時、$\exists$と$\forall$はどのように証明プロセスに影響するか。
+
+前にも書いたような気がするが、再整理。
+
+\subsection{定義}
+%\include{"definition"}
+
+
+\section{単純な例}
+\subsection{いくつかの変数に依存して値の決まる場合}
+例1)
+\begin{description}
+\item[ conj :] $\forall x \exists y \Phi(x,y)$
+\item[ $\neg$conj :]  $\exists x \forall y \neg \Phi(x,y)$
+\end{description}
+
+conjの場合は、$\herbrand$の任意の要素$e$について、ある値yが存在して$\Phi(e,y)$が成り立つ。
+これを反証で証明する場合、$\neg$conjの形になる。
+clauseに変換すると、変数$x$は定数$c_x$に置き換わるので、
+$$\neg \Phi(c_x, y)$$
+の反証を行うことになる。
+
+conjの証明のためには、$c_x$の選択方法にしたがって、
+すべての$c_x \in \herbrand$について、反証を行う必要がある。
+
+$\herbrand$を記号的にいくつかの集合に分け、それを表す論理式を用いて、
+有限の場合分けにできれば、証明操作は完了できるだろう。
+
+\subsection{特定の変数に対して、すべての値で真になる場合}
+例2)
+\begin{description}
+\item[ conj :] $\exists x \forall y \Phi(x,y)$
+\item[ $\neg$conj :]  $\forall x \exists y \neg \Phi(x,y)$
+\end{description}
+
+conjは、
+ある$c_x \in \herbrand$が存在して、すべての$y$について$\Phi(c_x, y)$が成立すると主張している。
+
+このタイプの証明では、$\herbrand$の全要素について反証を試みて、
+ひとつも反例がないことを示さなくてはならないので、反証法は適さない。
+たとえば、この例を反証するには、どのような$c_x$を選んでも、
+すべての$y$について$\neg \Phi(c_x, y)$であるというのだから、
+x,yの両方に$\herbrand$の要素をあてはめて反証ができないことを言うしかない。
+
+反証の中に$\exists y$があるということは、$\herbrand$の全要素について調べなくてはならないということ。
+
+
+\section{どのような論理式なら反証法で証明できるのか}
+
+\end{document}

@@ -29,6 +29,15 @@
 
 \section{概要}
 \begin{description}
+\item[unifyの見直し] 
+\begin{description}
+\item[ SAU] subst, apply, unifyの見直し。substは並列に行う。unifyは原アルゴリズムか、一部パラか。 
+\item[ $v \leftarrow t$] 確率に似ているか。$\frac{[[t]]}{[[x]]}$みたいなこと。
+\item[  $\sigma$] 代入により減るドメイン。定数と違う先頭記号
+\item[ $x\leftarrow f(x)$]  unifyではじかれる理由の説明。
+\item[ $E\sigma^k$ による記号列] 極限のようにして、$[[t]]$を定義できないか。
+\end{description}
+
 \item[ モデルに基づく証明] Hをベースにして、$\mathcal{A}$ をground clausesの公理集合に展開し、証明する。
 無限集合になったときどうなるのか?
 \item[ $\mathcal{A}$の構造] 公理集合は、FactとDefinitionからなり、定理を導きたい・・・のか?
@@ -112,6 +121,21 @@ conjectureの式は人間が書くので、新しい定理が生まれてくる�
 
 法律でもそうではないか。
 
+\section{公理集合の分類}
+NNは特定のデータについて、カテゴリーへの分類ができるから$P(c) := [P(c)] \geq \tau$として述語を定義できる。
+否定は$\neg P(c) := [P(c)] \leq \tau_2$として定義できるだろう。
+
+一方で、$\mathcal{A}$に記号として含まれないリテラルは偽ではない。$\{L, \neg L\}$は矛盾するが、$\{ L\}$や$\{\neg L \}$は矛盾しないからである。
+
+
+\begin{description}
+\item[ Ground Fact] Ground Unit Clauseで表される。特定の対象についての性質の記述。命題と同じだが、そこに論理式の構造がはいっているところだけ、複雑。
+\item{Ground Rule} 複数のリテラルから構成されるclause。Ground Factだけから構成される論理式。$P(a) ⇒ Q(b)$のような形であり、真とする命題は有限個しかない。
+\item{Fact} 変数を含むようなFact。これは具体的な計算によらない断定も含む。たとえば、$P(f(x))$とだけ書かれたclauseは、ドメインHのすべての項$t$に対して$f(t)$は$P$という性質を持つと言っているのだが、これが$\mathcal{A}$に書かれていない理由/根拠によって真であると言われるということになる。
+\item{Rule} 変数を含む推論法則。これを定義と考えるか、ドメインに関する何らかの性質の表明と考えるか。
+定義とすると、それがWell definedかどうかしか言えない。
+性質の表明というのは定理とか命題というわけだから、証明が必要になるので$\mathcal{A}$に含めないのでよいだろう。
+\end{description}
 
 
 
