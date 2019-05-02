@@ -31,12 +31,19 @@
 \begin{description}
 \item[unifyの見直し] 
 \begin{description}
-\item[ SAU] subst, apply, unifyの見直し。substは並列に行う。unifyは原アルゴリズムか、一部パラか。 
-\item[ $v \leftarrow t$] 確率に似ているか。$\frac{[[t]]}{[[x]]}$みたいなこと。
-\item[  $\sigma$] 代入により減るドメイン。定数と違う先頭記号
-\item[ $x\leftarrow f(x)$]  unifyではじかれる理由の説明。
-\item[ $E\sigma^k$ による記号列] 極限のようにして、$[[t]]$を定義できないか。
+\item[ ・SAU] subst, apply, unifyの見直し。substは並列に行う。unifyは原アルゴリズムか、一部パラか。 
+\item[ ・$v \leftarrow t$] 確率に似ているか。$\frac{[[t]]}{[[x]]}$みたいなこと。
+\item[ ・$\sigma$] 代入により減るドメイン。定数と違う先頭記号
+\item[ ・$x\leftarrow f(x)$]  unifyではじかれる理由の説明。
+\item[ ・$E\sigma^k$ による記号列] 極限のようにして、$[[t]]$を定義できないか。
 \end{description}
+
+\item[トレース] goalのproofをおいかけて、情報の流れをみたい・・・考えてみたらcoqみたいか
+\begin{description}
+\item[ ・]  goalに$\mathcal{A}$を適用した1stepの結果
+\item[・] 最大3回までかける
+\end{description}
+などの条件で実行。。。という感じ
 
 \item[ モデルに基づく証明] Hをベースにして、$\mathcal{A}$ をground clausesの公理集合に展開し、証明する。
 無限集合になったときどうなるのか?

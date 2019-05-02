@@ -46,15 +46,15 @@ $\mathcal{V}$は変数記号の集合、$\mathcal{T}$はtermの集合とする�
 ここでは、変数記号は、$x,y,z$、定数記号は$a,b,c$とする。
 
 \begin{description}
-\item[$\subst{x}{x} $]  空代入
-\item[$\subst{x}{f(y)}$] 項の代入
-\item[$\subst{x}{f(x)}$] 代入の右辺が変数でなく、同じ変数を含む場合。
-\item[$\substset{(x,y)}{(f(y),g(y))}$] ベクトルの場合
+\item[・$\subst{x}{x} $]  空代入
+\item[・$\subst{x}{f(y)}$] 項の代入
+\item[・$\subst{x}{f(x)}$] 代入の右辺が変数でなく、同じ変数を含む場合。
+\item[・$\substset{(x,y)}{(f(y),g(y))}$] ベクトルの場合
 \end{description}
 
 \subsection{apply}
 \subsubsection{項へのapply}
-表現$E[x,y]$へのSubstitiontion$\subst{x,y,z}{s,t,u}$は、表現$E$に出現するすべての変数$x,y,z$を同時に並行に表現$s,t,u$に置き換える操作である。
+表現$E[x,y]$へのSubstitiontion$\subst{(x,y,z)}{(s,t,u)}$は、表現$E$に出現するすべての変数$x,y,z$を同時に並行に表現$s,t,u$に置き換える操作である。
 
 だから、Substitutionを変数ごとに$\eset{\subst{x}{t},\subst{y}{s}}$と表現せずに、$\subst{(x,y)}{(t,s)}$と表記する。
 
@@ -73,7 +73,7 @@ $t\apply\sigma \equiv s\apply\sigma$
 が成り立つ。
 
 \section{性質}
-\subsection{nificationでは$\unify{x}{f(x)}$が発生しない}
+\subsection{unificationでは$\unify{x}{f(x)}$は排除される}
 
 \proofname{1}
 
@@ -81,23 +81,55 @@ $\sigma=\unify{x}{f(x)}$ならば、$x\apply\sigma = f(x)\apply\sigma = f(x\appl
 
 $\sigma$に変数$x$の代入$\subst{x}{s}$が含まれているならば、これは$s\equiv f(s)$であることを意味する。
 
-このとき、$s$は$f$で始まる表現であり、有限の記号列としてはそのような$s$は存在しないので、
+このことから、$s$は$f$で始まる表現でありしかも、fの右側が$s$それ自体でなくてはならない。
+有限の記号列としてはそのような$s$は存在しないので、
 $\sigma=\unify{x}{f(x)}$は存在しない。
+
+\subsection{列のunification}
+関数記号を持つ項のunificationでは、実質的にベクトルあるいは列のunificationが発生する。
+
+$\sigma=<f(\bar{s}):f(\bar{t})>$はを次のように定義する。
+
+$t\equiv f(t_1,t_2,\dots,t_k), s\equiv f(s_1,s_2,\dots,s_k)$とする。
+
+このとき、代入の列$\sigma_0, \sigma_1, \dots, \sigma_k$を次のように定義する。
+
+\begin{eqnarray*}
+\sigma_0&=&<s_0:t_0> \\
+\sigma_1&=&<s_1\sigma_0:t_1\sigma_0>\\
+&&\hdots\\
+\sigma_k&=&<s_k\sigma_{k-1}:t_k\sigma_{k-1}>
+\end{eqnarray*}
+
+そして $$\sigma = \sigma_k$$
+
 
 \subsection{記号の無限列}
 次に、代入$\sigma_0=\subst{x}{f(x)}$を考える。
 記号の列
-$$x, x \sigma_0, x \sigma_0^2, x \sigma_0^3,\dots,x \sigma_0^k, \dots$$
+$$x, x \sigma_0^1, x \sigma_0^2, x \sigma_0^3,\dots,x \sigma_0^k, \dots$$
 つまり
 $$x, f(x), f^2(x), \dots , f^k(x), \dots $$
 を考える。
 
-unification $sigma=\unify{t}{s}$は、二つの表現$t$と$s$の差を意味している。
+unification $\sigma=\unify{t}{s}$は、二つの表現$t$と$s$の差を意味している。
 
 記号列の隣り合う記号の差$\unify{f^k(x)}{f^{k+1}(x)}$は、常に$\unify{x}{f(x)}$であり、記号列をどれだけ先に進んでも変化しない。
-
-このような代入を繰り返し適用してできる記号の列の収束というものは考えられないか。
+し適用してできる記号の列の収束というものは考えられないか。
 (これだけだと、有限か無限に続くかでしかないので、つまらない)
+
+例)
+
+有限の場合
+\begin{eqnarray}
+<x:x>  &:& x,x,x,\dots \\
+<x:y>  &:& x,y,y,\dots \\
+<x:f(y)> &:& x,f(y),f(y),\dots
+\end{eqnarray}
+
+補足
+
+$t_i\neq t_{i+1}$で、$\subst{x}{f(x)}$の場合、$<t_i:t_{i+1}>$が不変になる。
 
 \subsection{termのドメイン}
 

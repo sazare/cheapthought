@@ -5,6 +5,8 @@
 %\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
 %\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
 								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage[all]{xy}
+\usepackage{enumerate}
 
 \usepackage[all]{xy}
 \usepackage{enumerate}
@@ -48,13 +50,23 @@ conjの場合は、$\herbrand$の任意の要素$e$について、ある値yが�
 これを反証で証明する場合、$\neg$conjの形になる。
 clauseに変換すると、変数$x$は定数$c_x$に置き換わるので、
 $$\neg \Phi(c_x, y)$$
-の反証を行うことになる。
+で反証を行うことになる。
 
 conjの証明のためには、$c_x$の選択方法にしたがって、
 すべての$c_x \in \herbrand$について、反証を行う必要がある。
 
 $\herbrand$を記号的にいくつかの集合に分け、それを表す論理式を用いて、
 有限の場合分けにできれば、証明操作は完了できるだろう。
+
+\begin{eqnarray*}
+ \{\forall c_x \in \mathcal{H}\} \mathcal{A},\forall y \neg \Phi(c_x) \vdash \Box\\
+ \mathcal{A} \cup \{\neg \Phi(c_x, y)\} \vdash \Box \\
+ ここで\\
+ \mathcal{A} \rightarrow \Phi(x, f(x))と
+ \neg\Phi(c_x, y)
+ をrefuteし\\
+ \subst{(x,y)}{(c_x, f(c_x))} という形のfの存在を示すか、証明する必要がある。
+\end{eqnarray*}
 
 \subsection{特定の変数に対して、すべての値で真になる場合}
 例2)
@@ -76,5 +88,55 @@ x,yの両方に$\herbrand$の要素をあてはめて反証ができないこと
 
 
 \section{どのような論理式なら反証法で証明できるのか}
+
+まず、$\{something\}$は、意味論に基づくメタな操作を示すことにする。
+例えば、$\forall c \in \mathcal{H}$で、エルブラン宇宙のすべての要素について何かを行うとかを示す。
+
+\subsection{その1}
+$$
+\xymatrix{
+Conjecture & Neg Conjecture \\
+\forall x P(x) \ar[d] \ar[r]& \exists x\neg{P(x)}\ar[d] \\
+P(x) \ar[d]& \{\forall c \in \mathcal{H}\} \neg{P(c)}, \mathcal{A} \vdash \Box \\
+\neg{P(x)} 
+}
+$$
+
+\begin{description}
+\item[Conjecureの場合] $\mathcal(A), \neg P(x) \vdash \Box$が証明できれば
+これが反証になり、$\Box\subst{x}{c}$というmguが得られた時
+$c \in H$で$\mathcal{A}\vdash P(c)$しか言えない。
+
+すべての$H$の要素については何も証明できていない。
+
+\item[Neg Conjectureの場合]反証から
+$$\{\forall c \in \mathcal{H}\} \mathcal{A} \vdash P(c)$$
+が言えるので、$\forall x P(x)$が証明できる。
+
+\end{description}
+
+\subsection{その2}
+
+Conjectureが$\exists x P(x)$の場合、
+\begin{description}
+\item[Conjecture] の中で$\exists x P(x)$をskolemizeすると
+$\{ select c \in \mathcal{H}\}$として要素cを選び、それの否定を
+$\neg P(c)$としてneg conjを作り、
+$\mathcal{A}, \neg P(c) \vdash \Box$を
+すべてのcについて実行する必要があり、手続きとして成り立たない。
+\item[Negate]では$\forall x \neg P(x)$を反証するので
+skolemizeは発生せず、
+$\mathcal{A}, \neg P(x)\vdash \Box$の証明をして
+$\substset{x}{a}$が得られたとすると、$x$として$a$の
+存在がいえるので、Conjectureの証明ができる。
+このときは$\mathcal{H}$を用いた、意味論にもとづく操作は
+必要ない。
+\end{description}
+
+その1とその2から、Conjecture $\Phi$をそのまま否定するのは、
+手続きとして成り立たない。
+
+
+
 
 \end{document}

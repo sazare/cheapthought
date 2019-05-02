@@ -22,22 +22,34 @@
 
 \title{公理集合の変換について}
 \author{\myname}
-%\date{}							% Activate to display a given date or no date
+\date{}							% Activate to display a given date or no date
 
 \begin{document}
 \maketitle
 
 \section{概要}
-公理集合 $\mathcal{A}$に対して、構文的変換$\mathcal{T}$を定義し、$\mathcal{T}{\mathcal{A}}$が公理集合となる。
+公理集合 $\mathcal{A}$に対して、構文的変換$\mathcal{T}$を定義し、$\mathcal{T}(\mathcal{A})$が公理集合となる。
 
 この構文的変換を公理の変換と呼ぶ。
 
-$\mathcal{T}$は論理式ではなく、構文的な変換なので、$\mathcal{A}$と$\mathcal{T}{\mathcal{A}}$に$\mathcal{T}$を加えても証明はできない。そもそも、$\mathcal{T}$は論理式ではない。
+$\mathcal{T}$は論理式ではなく、構文的な変換なので、$\mathcal{A}$と$\mathcal{T}(\mathcal{A})$に$\mathcal{T}$を加えても証明はできない。そもそも、$\mathcal{T}$は論理式ではない。
 
+\subsection{$\mathcal{A}$と$\mathcal{T}(\mathcal{A})$の関係は?}
+たとえば・・・
 
-\subsection{定義}
+$$\mathcal{A}\vdash \psi ならば \mathcal{T}(\mathcal{A}) \vdash \mathcal{T}(\psi)$$
+$$\mathcal{T}(\mathcal{A}) \vdash \mathcal{T}(\psi) ならば \mathcal{A}\vdash \psi $$
+
+という意味で等価。となるようにしたい。
+
+$\mathcal{T}$はどのようなものか? なんとなくNatural Transformationにみえるのだけど、そのためには、どのようなカテゴリーになるべきか。
+
+%\subsection{定義}
 %\include{"definition"}
 
+
+\section{例}
+例が必要
 
 
 \end{document}
