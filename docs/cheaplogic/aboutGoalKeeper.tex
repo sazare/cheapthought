@@ -1,0 +1,194 @@
+\documentclass[10pt, onecolumn]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{GoalKeeper}
+\author{\myname}
+\date{20190512}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{概要}
+Factをclause集合の外側で作成するという考えで、外部を機械学習でなく人にした場合の例を考えた。
+
+GoalKeeperというシステムで、WebのViewから入力した内容をFactとして証明を進める。
+
+\subsection{GoalKeeperを使った操作の流れ}
+
+\begin{enumerate}
+\item 基本となるルールを書く(Base)
+\item Baseのもとで、証明したいclauseを示す(Goal)
+\item 外部システムから、時とともに、事実だと認められたClauseがFactとして追加されてくる。
+\item Factが追加されるたびに、Goalが更新される(可能なら)
+\end{enumerate}
+
+
+Goalの更新には、ふたつの方法がある。
+
+1つ目は、Factが追加されるたびに、Goalから$\cont$が証明できるかどうかを判定する。
+
+2つ目は、Factが追加されると、Goal+Base+Factからresolventを導き、Goalを新しいGoalに置き換える。
+
+Goalが変化するということは、そのときのGoalを見ればあと何を示さなくてはならないかがわかるということなので
+後者のほうが人間の得る情報が多い。
+だから、後者にしたいが、とりあえず前者にするというのもありうると思う。
+
+実装の用語だが、clauseの集合をCoreというデータ構造で保持している。
+
+3つの構成要素の意味、役割。
+
+\begin{description}
+\item[ Base] 推論の主体となるルール。初期coreを構成する。
+\item[ Goal] Baseに基づいて、実現したいclause。
+\item[ Fact] 外部システムによって正しいと認められるclause
+\end{description}
+
+
+\section{イメージ}
+\begin{enumerate}
+\item $B+G$で、どの述語にViewを対応させるかは、あらかじめ定義しておく必要がある。
+動的にPageを作るというのであれば、ここは自由だが・・(*ここ不十分)
+\item Goalに対してBase+Factを適用して、Goalのリテラルが、Viewを持つものになるまで変形していく。
+(不十分: Factが1clauseか複数のclausesになりうるか)
+\item すべてがViewを持つ=Factになりうる必要はないように思うが(*ここ不十分) \\
+複数のLiteral in GoalがFactable$\footnote{Factableは造語で、Factになりうるclause/unit clause/literalという意味。factorialと似ているので、似た言葉がすでにあるのかもしれない。ちょっと調べたがfactableは辞書にはなかった}$になるまで変形すると、(*ここ不十分)\\
+FactableでないLiteralをのぞいて、Goalに対してPageの集合が対応し、Web画面が起動する。
+\item Factはground unit clauseかどうか。\\
+変数を含んでいても、その値がなんでもよいという扱いなら、Factとして使いうる。
+たとえば、ViewでEntry Sheetみたいなものを考えるとき、
+そ入力の必要のない項目は、変数のままにしておけばいいはずなので
+GroundでないFact clauseがあってもいいのではないか。
+Partial Factと呼んでもよいかも。
+Unit ClauseはPartial Factということになる。
+\item Factable LiteralとViewをつなぐものはvarsとそれに対する代入になる。\\
+Fと Vの間は、標準Literalを介してデータが相互に渡る。
+標準Literalは、引数がすべて異なる変数のリテラル。
+Factable と標準をunifyすると、そのσはViewに表示すべき項目の値になる。
+Pageはvarsを持つので、そのσをPageに適用すると、計算できる。
+Pageで入力がconfirmされたときは、Pageのもつvarsに対する代入σも決まるので
+pageのvarsは標準literalのvarsと同じであり
+そのσをFactable$\approx$標準に適用すれば、Viewから得たFactリテラルが作れる
+\end{enumerate}
+
+\newpage
+\section{例}
+\subsection{例1 命題の場合}
+命題の場合、テキストを表示し、confirmボタンだけがあるようなViewになる。
+\begin{eqnarray*}
+Goal &=& [-P] \\
+Base &=& \emptyset \\
+Fact(1) &=&+P 
+\end{eqnarray*}
+\subsection{例2 1画面だけの場合}
+基本的な仕組みが働くかどうかの確認ができる
+\begin{eqnarray*}
+Goal &=& [-P(x)] \\
+Base &=& \emptyset \\
+Fact(1) &=&+P(a) 
+\end{eqnarray*}
+\subsection{例3 goalが2リテラルの場合}
+2つの画面は独立である。
+2つのViewが同時にconfirmされるか、順番にconfirmされるかという見え方の違いは
+Prover側では関与しない。というようになるとよい。
+\begin{eqnarray*}
+Goal &=& [-P(x),-R(y)] \\
+Base &=& \emptyset \\
+Fact_a &=&+P(a) and +R(b) \\
+or \\
+Fact_b &=& (1) +P(a) , (2) +R(b)
+\end{eqnarray*}
+
+\subsection{例4 2つの画面が共通のデータを持つ場合}
+View間の共通の変数の扱いは、varsに対する代入を介して行えば、
+Factとのデータ交換と同じ仕組みになり、気持ちがいい。
+\begin{eqnarray*}
+Goal &=& [-P(x),-R(x)] \\
+Base &=& \emptyset \\
+Fact_a &=&(1) +P(a) \\
+or \\
+Fact_b &=& (1) +R(b)
+\end{eqnarray*}
+
+\subsection{例5 Goalから推論して二つのGoal-Factになる場合}
+Baseが存在し、Goalに関与する場合。
+\begin{eqnarray*}
+Goal &=& [-P(x,y)] \\
+Base &=& \{+P(x,y)-Q(x)-R(y)\} \\
+Fact &=&(1) +P(a) \\
+& & (2) +R(b)
+\end{eqnarray*}
+
+\subsection{例6 Goalの推論中に、Factableでないものがある場合}
+\begin{eqnarray*}
+Goal &=& [-P(x,y)] \\
+Base &=& \{+P(x,y)-Q(x), +Q(x,y)-S(x,y)\} \\
+Fact &=&(1) +S(a,b)
+\end{eqnarray*}
+
+\subsection{例7 Goalの推論で複数のgoalが出現する場合}
+\begin{eqnarray*}
+Goal &=& [-P(x,y)] \\
+Base &=& \{+P(x,y)-Q(x)-R(y), +Q(x)-S(x)\} \\
+Fact &=&(1) +R(a), +S(b) \\
+or 
+& & (1) +R(a), (2) +S(b)
+\end{eqnarray*}
+
+\subsection{例8 Goalの推論で条件付きで複数のViewになる場合}
+20歳以上の場合は支払い方法を入力する画面がでるようなイメージ
+\begin{eqnarray*}
+Goal &=& [-Confirm(name, age)] \\
+Base &=& \{+Confirm(name, age)-ge(age,20)-Pay(name,age),
++Confirm(name, age) +ge(age,20)\} \\
+Fact &=& 不明
+\end{eqnarray*}
+たとえば$-Pay(name)\{ge(age,20)\}$のように、年齢判定のexecutableはPayにつくのかもしれない。
+画面制御をするために、処理順を反映したリテラルを入れるということも考えられ、
+その場合、goal変形の方式にも影響がありそうだが、できるかもしれない。
+でも、それは避けたい。
+
+述語で処理を書いてはいけないと思う。
+
+\newpage
+\section{課題}
+\begin{description}
+\item[0]Viewの出現タイミング(Tabか遷移か)
+Goalの変換で、どこまでproofを進めればよいか?
+\item[1]Goalに1つでもFactableがでてくるまで進めて、Factableに対応するViewをUIで示す。\\
+1Pageが遷移していくものになり、画面遷移をLogicで書きたくなるかもしれない。
+それは望まない。証明の都合で、画面遷移が変わるとかはいや。
+\item[2]GoalがすべてFactableになるまで証明を進めて、Goal単位でPageに変換する。
+並列でPageがでるので、Tab切り替えのようなものになるのではないか。
+\item[3]Factの変換とViewの遷移のタイミング・・・
+\item[4]Pageのある変数が別のPageの変数として使われているかもしれない。\\
+そのとき、varsに対するσとして適用と反映をpageごとに行えば同期がとれる。
+この同期のとりかたは、Factとの同期と一致しているはず。
+\item[5]Goalが複数のclauseになるとき1 clause goalに対して、
+複数のclauseが適用でき、その結果goalが複数になることを許すか?\\
+Viewから見ると、tabで別れたPageが複数でてくる。
+利用者はそれらのPageのどれか一つを入力しきればいい・・・
+\item[6]条件のある場合、異なるPageになるはず。だがリテラルと条件の対応はわからない
+
+\end{description}
+
+
+\end{document}

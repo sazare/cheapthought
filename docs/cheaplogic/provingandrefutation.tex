@@ -1,4 +1,4 @@
-\documentclass[10pt, oneside]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\documentclass[10pt, onecolumn]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
 \usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
 \geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
 %\geometry{landscape}                		% Activate for for rotated page geometry
@@ -24,7 +24,7 @@
 
 \title{証明と反証、全称と存在}
 \author{\myname}
-%\date{}							% Activate to display a given date or no date
+\date{20190512}							% Activate to display a given date or no date
 
 \begin{document}
 \maketitle
@@ -33,6 +33,11 @@
 反証で証明を作る時、$\exists$と$\forall$はどのように証明プロセスに影響するか。
 
 前にも書いたような気がするが、再整理。
+
+Kowalskiの本をみていると、$\forall も \exists$もないclauseで直接、式を書いているので
+こういう問題は気にしていないようだ。
+
+Horn clauseに限定しているというのも理由にはありそう。
 
 \subsection{定義}
 %\include{"definition"}
@@ -60,11 +65,10 @@ $\herbrand$を記号的にいくつかの集合に分け、それを表す論理
 
 \begin{eqnarray*}
  \{\forall c_x \in \mathcal{H}\} \mathcal{A},\forall y \neg \Phi(c_x) \vdash \Box\\
+ を変形し\\
  \mathcal{A} \cup \{\neg \Phi(c_x, y)\} \vdash \Box \\
  ここで\\
- \mathcal{A} \rightarrow \Phi(x, f(x))と
- \neg\Phi(c_x, y)
- をrefuteし\\
+ \mathcal{A} \rightarrow \Phi(x, f(x))と \neg\Phi(c_x, y)をrefuteし\\
  \subst{(x,y)}{(c_x, f(c_x))} という形のfの存在を示すか、証明する必要がある。
 \end{eqnarray*}
 
