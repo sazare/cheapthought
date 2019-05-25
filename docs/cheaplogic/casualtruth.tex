@@ -29,14 +29,18 @@
 
 \section{概要}
 
-これまでは、FactをNNなどの帰納的なシステムで得ると考えていたが、簡単な例として、Viewからの入力をFactとして扱うことを考えてみた。
+これまでは、FactをNNなどの帰納的なシステムで作られると想定していたが、人間がその替わりになるような例を思いついた。
 
-順番にentry画面がでてくるUIを考えると、それぞれの画面にLiteralまたはclause(タブで遷移)を考えれば、ViewにFactが対応するだろうと想像できる。
+Web Viewからの入力をFactとして扱うことができる。
 
-\subsection{関連する部分}
+たとえば、順番にentry画面がでてくるUIを考えると、それぞれの画面にLiteralまたはclause(タブで遷移)を考えれば、ViewにFactが対応するだろうと想像できる。
+
+\section{もう少し具体的に}
 goal指向のproverを考える。
-goal($g$)のあるリテラル($L_i$)に着目してresolutionを考える時、
+
+goal($g$)の一つのリテラル($L_i$)に着目してresolutionを考える時、
 その述語記号に対応するView($V_{L_i}$)を作成する。
+
 $V$でデータを入力し、confirmしたとき、$L_i$にその入力データを反映したリテラルを
 Fact($F_i$)と考える。
 
@@ -47,6 +51,47 @@ goal($g$)はFact($F_i$)とresolution/unify可能であり、$sigma_o$がその�
 
 Viewからは、confirmだけでなくcancelでも戻りうる。その場合はresolutionに失敗したとして
 そのliteralには何もしない。
+
+\subsection{ほかの方法}
+\begin{description}
+\item[ clauseあるいはcoreを$(Goal, Base, Fact)$と考える] 
+Baseはinput clauseで、goalはrefutationをするための手がかり、Factは普遍なものもありうるが、その時々で変わるものでもよい。上のEntryシートの例では、一年経てば年齢がかわつてしまう。そのセッションの間、変わらないという前提もありうるが、そのclause集合の表す世界が、何も変わっていないという保証はないので、Factは外部からその時々に与えられるclauseだと考えていい。
+\item[ 標準literalとViewテンプレート] goalからview, viewからfactに変換するとき、標準literalが必要である。
+これはgraphの$\bar{P} = P$に対応するリテラルと考えて良い。
+
+Viewは、Logicとは独立なので、テンプレートとして持つ必要があるだろう。
+これらにはvarsが付属する。
+
+core以外にも、標準literalとViewテンプレートを用意しなくてはならない。
+
+\item[ Fact とGraph] Factが世界についての正しい言明だとすると、Factはすべて$+P(...)$という形になる。
+つまり、ground unit clause。
+\item[ ground ] 世界に対する個別の言明なら、groundになる。
+外部の世界の話なので、なんらかの方法によって、対象の部分集合に対する言明が得られるかもしれない。
+その場合は$\forall x. +P(x) \{\phi(x)\}$ということもありうる。
+\item [ Fact はルールを含むか] そうなるとFactがunit clauseである理由も希薄になる。
+なんらかのルールであるとか、上に書いたような条件付きのFactというものはありうるだろう。
+
+\item[ goal ] goalの1つのliteralが解消されるとき、複数のgoalに分裂することがある。
+Viewを使わない方法なら、ないような気もするが、それはViewの形しだい。
+
+\item[ 複数literal goal ] goalは1つのclauseであり、複数のliteralを持ちうる。
+goalのView対応は、上では1つのliteralを選択して1つのViewにしたが、1つのclauseをまとめて複数のViewにする方法も考えられる。
+
+たとえば、Viewをタブで切り替える方法にすることもできる。その場合、変数bindingによって、異なるViewの同じ変数は同じ値にbindされる。
+
+このとき、いくつかのViewが同時にconfirmされることがある。つまり、未定義のままのViewもありうるということ
+
+\item[ 変数の値(入力側)] goalがresolventの場合を考えるとわかりやすいが、goalのliteralのいくつかの変数にはすでに定数が代入されている場合がある。
+
+Viewの観点からは、すでに値の決まっている項目が埋まった状態でのentryシートになる。
+
+もともとgoalの入力値があって、それが定数になっている場合は、入力値に対する値を求めるようなスキームになる
+
+\item[変数の値] Viewに値を代入する仕組みであるとか、Viewで入力された値からFactをつくる仕組みの部分では、標準literalとの代入$\sigma$を介して値の転送を行う。
+
+%20190526 疲れた。ここまで
+\end{description}
 
 
 %\subsection{定義}
