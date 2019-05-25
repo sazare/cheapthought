@@ -1,0 +1,77 @@
+\documentclass[10pt, onecolumn]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{一時的な真実}
+\author{\myname}
+\date{20190525}					% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{概要}
+
+これまでは、FactをNNなどの帰納的なシステムで得ると考えていたが、簡単な例として、Viewからの入力をFactとして扱うことを考えてみた。
+
+順番にentry画面がでてくるUIを考えると、それぞれの画面にLiteralまたはclause(タブで遷移)を考えれば、ViewにFactが対応するだろうと想像できる。
+
+\subsection{関連する部分}
+goal指向のproverを考える。
+goal($g$)のあるリテラル($L_i$)に着目してresolutionを考える時、
+その述語記号に対応するView($V_{L_i}$)を作成する。
+$V$でデータを入力し、confirmしたとき、$L_i$にその入力データを反映したリテラルを
+Fact($F_i$)と考える。
+
+Factは代入($sigma_o$)と等価になる。
+
+goal($g$)はFact($F_i$)とresolution/unify可能であり、$sigma_o$がその対価になる。
+これによってresolutionに相当する操作ができる。
+
+Viewからは、confirmだけでなくcancelでも戻りうる。その場合はresolutionに失敗したとして
+そのliteralには何もしない。
+
+
+%\subsection{定義}
+%\include{"definition"}
+
+
+
+\section{Factの形}
+ここに書いた方法では、Viewからconfirmで戻るときにFactが作られる。
+それは、$+P(a,b)$という形になっている。
+
+cancelの場合にも、Factが生成できないだろうか。
+たとえば、cancelの場合、$+P(a,b)$でなく、$-P(a,b)$つまり、$P(a,b)$ではないというclauseを
+生成するのはどうだろうか。
+
+これは、入力されたデータ自体は有効になるので、通常のViewと違う解釈になる。
+つまり、特定の入力の組に対して、それはViewの述語が成り立たないという強い主張をすることになる。
+
+通常のViewなら、cancelはそれに対するFactが存在しないというだけのことだ。
+
+$-P(a,b)$がFactであるというのは、a,bの具体的な組に対してPが成り立たないという判定をLogical Systemの外側で行なっているということになる。
+
+そういう情報が得られることもあるはずだ。
+
+
+
+
+\end{document}

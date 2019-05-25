@@ -168,6 +168,19 @@ Fact &=& 不明
 
 述語で処理を書いてはいけないと思う。
 
+あるいは、次のように書けるだろう。
+\begin{eqnarray*}
+Goal &=& [-Confirm(name, age)] \\
+Base &=& \{+Confirm(name, age)-Pay(name,age,i),\\
+&&+Pay(name, age) +ge(age,20), \\
+&&+Pay(name,age,i) -View(name,age,i) -ge(age,20)\} \\
+Fact &=& 何か
+\end{eqnarray*}
+ge(age,20)がPay()限定で意味を持つことを明示した。
+
+
+
+
 \newpage
 \section{課題}
 \begin{description}
@@ -187,6 +200,8 @@ Goalの変換で、どこまでproofを進めればよいか?
 Viewから見ると、tabで別れたPageが複数でてくる。
 利用者はそれらのPageのどれか一つを入力しきればいい・・・
 \item[6]条件のある場合、異なるPageになるはず。だがリテラルと条件の対応はわからない
+\item[7] goalからViewを作り、そのViewがconfirmで戻ってきてできるfactは、そのままgoalを消すのだから、公理として追加せず、単にgoalを消すことでresolutionのかわりになるのではないか。\\
+そうかもしれないが、Baseに含まれるgoalのインスタンスの形をしたliteralがこのfactによって消去されるかもしれないので、正しくはCoreに追加すべきだ。
 
 \end{description}
 
