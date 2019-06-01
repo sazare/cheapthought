@@ -1,0 +1,74 @@
+\documentclass[10pt, onecolumn]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{varsの変換}
+\author{\myname}
+\date{20190601}					% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{概要}
+Expressionにλbindingを表すvarsをペアとして考えている。
+
+clauseなので入れ子はない。
+
+varsのサイズ=次元=変数の数
+
+代入をtermsで表現している。
+
+
+$V_1,V_2,V_3,V_4$がすべて変数のベクトルの場合、次の代入を考える。
+
+$$V_1 = (V_2.V_3)・V_4$$
+
+$(V_2.V_3)$は、$V_4$を$V_1$に変換するものと考えられる。
+
+次の関係は自明。
+$$|V_1| = |V_3|、|V_2| = |V_4|$$
+
+例。
+$$[a,b] = ([x,y,z].[X,Y])・ [a,b,c])$$
+
+N次元の代入をM次元の代入に変換している。
+
+これを使うと、clauseの変数リストをliteralの変数リストとの変換は、これを使えばできる。
+
+
+ただし、literalの変数リストといっても、clauseの中のインスタンス化されたものではなく、
+標準リテラルを考える必要がある。
+
+\subsection{順序}
+$V_2.V_3$と$V_3.V_2$は、次元を逆に変換する。
+
+置換かと思ったが、置換をもっと分解した操作のような気がする。
+
+ともかく非可換な操作。
+
+
+
+%\subsection{定義}
+%\include{"definition"}
+
+
+
+\end{document}
