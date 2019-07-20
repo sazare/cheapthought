@@ -1,0 +1,111 @@
+\documentclass[10pt, onecolumn]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{変化するFactについて}
+\author{\myname}
+\date{}					% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{概要}
+Factの時系列を考える。
+
+その時間経過による変化をどう扱えばよいのかを考える。
+
+
+\section{そのいち}
+
+
+ある時刻tのFactの集合を$F_t$とする。
+
+時刻$t$から$t+1$に移ったとき、いくつかのFactが変化したとする。
+literalの同一性というものは意味がないが、述語のモデル/真になるドメインの変化には意味がある。
+(モデルという言葉は適切かどうか?)
+
+述語$P$の成立するground termリストの集合を考える。$[[P]]$と書く。
+
+$F_t$から$F_{t+1}$に移ったときに変化する部分集合を$D^t_{t+1}$と書くことにする。
+
+それ以外の部分、つまり$F_t - D^t_{t+1}$や$F_{t+1} - D^t_{t+1}$は、同一である。
+
+ここでFactの同一性を言うとき、変数の置き換えによる表現の違いは無視する。
+変数の置き換えによって同値を定義して、という操作は面倒なので略する。
+
+$D^t_{t+1}$のことを$D_t$と書く。
+
+$D_t \cap D_{t+1}$は$\emptyset$である。
+
+しかし、ある述語Pについて、リテラル$L_t = ±P(t)$は両方に含まれうる。
+そして、$L_t \neq L_{t+1}$である。
+
+このときLが述語記号PのPリテラルだとすると、
+$D_t$に含まれる$Pリテラル$の集合 $\mathcal{P}_t$ を考えることができる。
+
+この$\mathcal{P}_t$と$\mathcal{P}_{t+1}$についても共通のリテラルを持たない。
+
+$\mathcal{P}$に含まれるリテラル$L^P$は、全体で$[[P]]$を定義する。
+
+
+
+
+$\mathcal{P}$と$\mathcal{P}_{t+1}$に含まれる任意の$L^P_t$と$L^P_{t+1}$を考える。
+$[[P]]$は、$\mathcal{P}$に含まれるすべての$P(t)$について、Herbrand宇宙上の$\bar{t}={u|u \in t}
+の和集合$である。
+
+これはすべて同じ符号のリテラルの場合。
+
+逆の符号のリテラルが含まれている場合は、$\mathcal{P}_t$に含まれるリテラル$L^P$については、逆符号のリテラル$+L_1$と$-L_2$について$<L_1:L_2>$はすべてfailとならなければならない。mguが存在するということは、その$F_t$の中に矛盾が存在するということだからである。
+
+$F_t$のリテラルと$F_{t+1}$のリテラルは逆符号でmguが存在してもよい。時間の変化にともない、Pの意味が変わったということを意味する。
+
+
+$F_t$と$F_{t+1}$の$P-literal$で、同符号の場合、mguが存在しなければ、それらのリテラルはHerbrand空間の別のモデルについて述べているだけなので、何も問題はない。
+
+mguが存在する場合、mguはそれらのモデルの差を示している。
+mguが一方向の代入である場合、それは片方のリテラルがもう片方のリテラルのモデルを含んでいるという意味である。
+このような単純な包含関係の場合は、$F_t$の変化はモデルの増減を意味する。
+そうでない場合は、アメーバの体の一部が大きくなったり小さくなったりするような変化を示す。
+独立なリテラルはまた別の部分について大きくなったか消えたかを示す。
+
+だから、$D^P$を調べることが、時間による変化を調べることになる。
+
+
+\section{その2}
+$D_t$と$D_{t+1}$の例として。
+
+\begin{eqnarray*}
+D^P_t = \{+P(t_1), -P(t_2)\}\\
+D^P_{t+1} = \{+P(t_3), -P(t_4), -P(t_5)\}
+\end{eqnarray*}
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
