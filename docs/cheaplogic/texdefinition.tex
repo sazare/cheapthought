@@ -35,9 +35,33 @@
 \newcommand{\substset}[2]{\{\subst{#1}{#2}\}}
 \newcommand{\emptysubst}{\varepsilon}
 
-\newcommand{\unify}[2]{<\!#1\!:\!#2\!>}
 
 \newcommand{\moda}[1]{\mathcal{#1}}
 \newcommand{\herb}[1]{\mathbf{H}_{#1}}
+
+% new notation
+\newcommand{\tuple}[1]{[#1]}
+%\newcommand{\binding}[1]{[#1]}
+\newcommand{\binding}[1]{\tuple{#1}}
+
+
+% prapet = prtial braket notation
+\newcommand{\pra}[1]{<\!#1\!:}
+\newcommand{\pet}[1]{:\!#1\!>}
+\newcommand{\prapet}[2]{<\!#1\!:\!#2\!>}
+
+\newcommand{\unify}[2]{\prapet{#1}{#2}}
+%\newcommand{\resolve}[2]{\prapet{#1}{#2}}
+\newcommand{\resolve}[2]{\prapet{\tiny{-}#1}{\tiny{+}#2}}
+
+\newcommand{\Fail}{\varepsilon}
+\newcommand{\Contra}{\square}
+\newcommand{\Valid}{\blacksquare}
+
+
+% bracket notation
+\newcommand{\bra}[1]{<\!#1\!\mid}
+\newcommand{\ket}[1]{\mid\!#1\!>}
+\newcommand{\braket}[2]{<\!#1\!\mid\!#2\!>}
 
 

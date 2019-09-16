@@ -1,0 +1,124 @@
+\documentclass[10pt, onecolumn]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{Factの分類}
+\author{\myname}
+\date{}					% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{概要}
+世界をどのように書くか、あるいは世界をどのように見るかという観点から、
+Factと呼ばれるものを詳細化する。
+
+それによってFactの扱いが変わるだろうと思うから。
+
+ここではclause表現を前提とする。
+
+%\subsection{定義}
+%\include{"definition"}
+
+\section{Factの内訳}
+一般に、Factは事実を表す論理式と考えられる。
+
+しかし、実際に対象とする記述に含まれるclauseは、単純に「事実」だけではない。
+
+まず、事実は ground unit clauseで表される。
+正しいと考えられる規則や法則は、unitではないclauseとして書かれる。
+
+記述対象の世界は、なんらかの形で観測/観察でき、その結果を論理式で表現できると考える。
+
+\begin{description}
+\item[ 観測結果] 
+人間や機械によって、観測された結果を論理式で表現したもので、変数を含まない。
+
+機械学習による結果も含む。
+
+関数も含まないだろう。
+
+unit clauseで書かれる。
+
+\item{観測仮説}
+これは、観測結果に基づく仮説である。
+
+仮説が検証されたものと、まだ検証が住んでいないが多くの人に確からしいと信じられているものがある。
+
+これらは関数を含んでも良いし、unit clauseである必要はない。
+
+しかし、変数を含んだ観測結果に基づく規則は、証明は不可能であり、別の実験によって検証される必要があるだろう。
+
+これをFactと呼ぶべきかどうか異議のある人もいるだろうが、
+人間によって観測された事実であっても間違いは含みうるのであり、
+社会的に認められた仮説であれば、人間の推論においても含めるはずだから、認めざるを得ない。
+
+\item{仕様}
+対象世界の一部に、人間が設計し、仕様として組み込んだ部分のある場合、
+それらの仕様はFactと考えてよいだろう。
+
+人間の作成したシステムについて成り立つ事実である。
+
+これについては、検証可能かどうかという観点もあり、
+
+ground unit clauseであれば、一点のテストで確認できるのでFactとなる。
+
+しかし、変数を含む場合は、verificationが必要である。
+verificationを行わず、人間が証明をしただけという場合もあれば
+人間によるレビューのみという場合もある。
+
+\item{検証済み仕様}
+検証の方法にもよるが、形式的方法で検証したものはFactとして認めてもよいだろう。
+
+しかし、検証における前提であるとか、前提条件自体が成り立っているのかどうかなども
+Factの真偽に影響する。
+
+\item{期待}
+なんの証明もないが、人間が、正しいと考えるあるいは正しくあってほしいという記述。
+
+全体の証明結果を人間が使うものである以上、このようなFactも含めざるを得ない。
+
+\end{description}
+
+\section{今後の課題}
+\subsubsection{合理性}
+すべての論理式が真であるとは限らない。
+人間も、証明されていないが、正しいと信じていいのではないかという程度の事実を利用するし、
+経験的に成り立つと思われる規則さえ使う。
+
+経験的にしか正しいと思えない事柄を使うのは、それによって結論がすぐに見つかるというような、真偽とは別の基準があるのだと思う。
+
+そのような、Factの採用判断の部分を合理的に判定できるようにしたい。
+
+\subsubsection{仕様}
+対象世界に何かのプログラムが含まれているとして、そのプログラムの仕様が仮定される。
+現在、それらのプログラムの正当性が証明されているわけではないが、そのプログラムを
+使うということは、仕様が成り立っているとみなしていると考えるしかない。
+
+だから、上記の「仕様」というFactは事実になる。
+
+合理的に考えると、いわゆるバグというものは存在し、その場合、仕様$S$は事実ではなくなる。
+事実ではなくなるようなFactを含む記述にどう対処すればよいのか。今後の課題とする。
+
+
+
+
+\end{document}

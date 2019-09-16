@@ -1,0 +1,214 @@
+\documentclass[10pt, onecolumn]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{証明手順の軌跡}
+\author{\myname}
+\date{}					% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{概要}
+Resolution Principleを用いた反証では、証明の各ステップがリテラルのペアのunification($\unify{L}{R}=mgu$)のシーケンスあるいは木とみなせる。
+
+背景とする目的では、全証明の構造を分析したいので、失敗した証明についても情報がほしい。
+unifyの失敗の履歴を把握するためには、mguではなく(あるいはそれを含んだ)リテラルのペア$\unify{L}{R}$自体のシーケンスを保持する必要がある。
+
+その証明の試行の履歴をどのように利用できるかを考える。
+
+%$\bra{L} + \ket{R} = \braket{L}{R}$
+%$\pra{L} + \pet{R} = \prapet{L}{R}$
+%unify、binding、に加えて
+%Diracのbracket記法がいい具合に使えそうな気がするので、ためしてみる。
+
+
+\subsection{定義}
+\begin{description}
+\item[ 否定: ] リテラル$L$の符号を逆にしたものをリテラルの否定と呼び、$\bar{L}$と書く。
+リテラル$L$が$-P(x)$の場合は$\bar{L}\equiv +P(x)$であり、$L$が$+P(x)$の場合は、$\bar{L}\equiv -P(x)$である
+\item[ binding: ] 記号$x,y$を含む表現$E(x,y)$において、その$x,y$を変数として束縛する場合、bindingと表現の組を$\tuple{x,y}.E(x,y)$と書く。
+\item[ 代入: ] 通常の記法で、$\tuple{x,y}\leftarrow\tuple{a,b}$のように書くものを、ここでは$\binding{x,y}.\tuple{a,b}$と書く。 そして、bindingの変数の組が、文脈で曖昧さを持たない、つまりbinding情報が与えられれば代入を復元できるとき、代入を$\tuple{a,b}$とも書く。
+\item[ unification: ] 二つの式$L$と$R$のunificationを$\unify{L}{R}$と書く。unificationが成功すればこの表現はmguを値とするが、unificationが失敗する可能性もあり、その場合は値を取らないpartialな式である。
+Juliaによる私の実装では、失敗は:Failを例外としてthrowするようにしているが、失敗した場合、
+そのことを$\unify{L}{R}$が$\Fail$になったというような表現もする。
+$\Fail$はFailを表す。
+
+リテラルの場合、左側を$-$、右側を$+$とみなし、$-P(x)$と$+P(y)$のresolveは、$\resolve{P(x)}{P(y)}$という表記でunificationだけでなく、resolveしていることも示そう。この表記の値、mguはリテラルの符号を除いたアトムのunify、$\unify{P(x)}{P(y)}$に等しい。
+
+\item[ binding: ] unificationの式$L$と$R$に出現する変数を明記する場合は、
+\begin{eqnarray*}
+\binding{x,y}.\unify{\bar{P}(x,y)}{P(a,b)} = \binding{x,y}.\tuple{a,b}
+\end{eqnarray*}
+のように書く。
+
+代入のbinding、$[x,y].$もまたbindingを表すが、代入の場合は、代入先の変数のリストをも表している。
+二つの意味を担っている。
+
+\item[変数の分離] 二つの式をbindingを明記して、$V_L.L[V_L]$と$V_R.R[V_R]$と書いた場合、$V_L$と$V_R$を並べて変数リストを作り、unificationを$[V_L,V_R].\unify{L}{R}=[\sigma_L,\sigma_R]$と書ける。
+このとき、$\sigma_L \cap V_R=\emptyset$かつ$\sigma_R \cap V_L=\emptyset$の場合、これをunificationが分離されているとか、mguが分離されていると呼ぶことにする。
+代入mguによって、LとRが混ざらないということである。
+
+mguが分離されているということは、変数の循環がない一方通行の代入になっている。
+
+\item[証明に付随するmgu]
+あるclause($C$)の証明に付随する代入とは、$C$の証明の各stepで作られるすべてのmguを合成した代入である。
+すべてのclauseの変数は異なるようにつけなおす。代入の合成(または積)は、「代入の新しい操作」などで定義したもの。
+
+\item[代入がgroundである] 
+代入がgroundであるとは、$V.\bar E$のEがgroundであるような代入のことである。
+
+反証がgroundであるとは、$\Contra$に付随するmguがgroundであることとする。
+
+\end{description}
+
+私の実装では、すべてのclauseのbindingが分離されているという条件(Disjoint Variable Condition; DVC)を維持するようにresolventを作成している。最初に与えられたclauseの性質にもよるが、resolutionの処理の最初で、変数をdisjointにするために変名する方式では、そのresolutionが失敗したとき、この変名処理が無駄になる。
+
+別の方法によって、resolutionがうまく成功するように組み合わせられれば、DVCを維持する方式のほうが効率がよいはずである。
+
+しかし、この方式では、無駄な変数が大量に生成されるので、メモリ効率は悪くなるだろう。
+
+以下の議論では、式を見やすくするため、変数のrenameは人間が行い、変数の数を最小限にする。
+
+\subsection{基本}
+\subsubsection{Resolution Refutationの基本}
+次は自明である。
+\begin{itemize}
+\item [リテラルの有限性:] 与えられたclauseの集合$\mathcal{A}$から生成されるresolventを構成するリテラルは、すべて$\mathcal{A}$に含まれるリテラルのインスタンスである。
+つまり、$\mathcal{A}$から生成される証明を構成するLiteral $L_n$は対応するinput literal $L_0$と代入$\sigma$が存在し
+$L_n = L_0 \cdot \sigma$
+とできる。
+
+\item [証明とunification :] 漠然とした話をすれば、ひとつの証明(反証)に含まれる項レベルの情報は、その証明で行われるunificationで求められるmguの集合あるいはその合成である。項レベルの情報というのはその証明に対応する計算が、mguの合成によって定められるという意味である。
+プログラムに現れないどの述語記号がresolveされたのかという情報は失われる。
+\end{itemize}
+
+以下では、clauseの集合$\mathcal{A}$が与えられたとき、その中のひとつのclauseをgoal $(G)$として選択して反証を求めることを考える。$G$を決めないと、証明が特定されない。$G$を決めてもユニークには決まらない可能性があるからである。
+
+$<\mathcal{A},G>$から生成される証明木の全体を考えると、無限の長さを持つ木もあるかもしれないが、その証明の各stepに出現するリテラルペアは全て入力clauseに書かれているリテラルのインスタンスである。
+
+個々の証明は異なるが、同じclauseが反復して使われるというパターンがあり、それが無限の定理を生み出す=証明を生み出す。そして、そのパターンの表現はプログラムとみなせる。
+
+その場合、パターンが無限にあるわけではなく、inputテラルのペアのインスタンスが無限にあるだけなので、証明全体の構造は有限のデータとしてとらえられるはずである。
+
+有限の組み合わせではあるが、そのパターンが数論の複雑な証明や、そもそも証明されていない仮説に基づいて計算されるような場合、実質的にどのようなパターンであるかを示すことはでない。
+
+\subsubsection{例1}
+clauseの集合$\mathcal{A}$として次の集合を考える。
+\begin{enumerate}
+\item [(1)] $-P(x)$
+\item [(2)] $+P(0)$
+\item [(3)] $-P(n)+P(n+2)$
+\end{enumerate}
+
+clause(1)をgoalとする。
+リテラルには出現順にliteral番号を与える。つまり、$+P(n+2)$はリテラル4である。
+
+このとき、可能なpairは次の4つである。これらを$\mathcal{A}$の$Lpair$とも呼ぶことにする。
+このように変数を含んだ$Lpair$は有限個しか存在できない。
+
+\begin{itemize}
+\item [1)]$\unify{1}{2} \equiv \unify{-P(x)}{+P(0)}[]$
+\item [2)]$\unify{1}{4} \equiv \unify{-P(1)}{+P(n+2)}[-P(n)]$
+\item [3)]$\unify{3}{2} \equiv \unify{-P(n)}{+P(0)}[+P(n+2)]$
+\item [4)]$\unify{3}{4} \equiv \unify{-P(n)}{+P(n'+2)}[+P(n+2),-P(n')]$
+\end{itemize}
+
+変数$n'$はrenameによって$n$から発生した変数である。
+この[]や[〜]はresolveした後に残るliteralを示している。
+Lpairでは[]の部分は無視する。
+
+$4)$の$\unify{3}{4}$では、resolutionの進行方向から、残るはずの$+P(n+2)$は
+すでに消去されていると考え、
+$$\unify{3}{4} \equiv \unify{-P(n)}{+P(n'+2)}[-P(n')]$$
+
+と見ることにする。これが妥当かどうかはよくわからない。
+
+同様に、$3)$も
+$$ \unify{-P(n)}{+P(0)}[]$$
+とみなす。
+
+さらに、[3]などのliteralをpra記号で表わすと次のようになる。
+
+\begin{itemize}
+\item[1)] $\unify{1}{2} \equiv \unify{-P(x)}{+P(0)}$
+\item[2)] $\unify{1}{4} \equiv \unify{-P(1)}{+P(n+2)}\pra{-P(n)}$
+\item[3)] $\unify{3}{2} \equiv \unify{-P(n)}{+P(0)}$
+\item[4)] $\unify{3}{4} \equiv \unify{-P(n)}{+P(n'+2)}\pra{-P(n')}$
+\end{itemize}
+
+bindingを明記するとつぎのように表される。
+
+\begin{itemize}
+\item[1)] $\unify{1}{2} \equiv \binding{x}.\unify{-P(x)}{+P(0)}$
+\item[2)] $\unify{1}{4} \equiv \binding{x,n}.\unify{-P(x)}{+P(n+2)}\pra{-P(n)}$
+\item[3)] $\unify{3}{2} \equiv \binding{n}.\unify{-P(n)}{+P(0)}$
+\item[4)] $\unify{3}{4} \equiv \binding{n,n'}.\unify{-P(n)}{+P(n'+2)}\pra{-P(n')}$
+\end{itemize}
+
+unificationを計算すると次のようになる。
+
+\begin{itemize}
+\item[1)] $\unify{1}{2} \equiv \binding{x}.\unify{-P(x)}{+P(0)} = \binding{x}.\tuple{0} $
+\item[2)] $\unify{1}{4} \equiv \binding{x,n}.\unify{-P(x)}{+P(n+2)}\pra{-P(n)} =\\
+ \binding{x,n}.\tuple{n+2,n}$
+\item[3)] $\unify{3}{2} \equiv \binding{n}.\unify{-P(n)}{+P(0)} = \binding{n}.\tuple{0}$
+\item[4)] $\unify{3}{4} \equiv \binding{n,n'}.\tuple{n'+2,n'}\, [\binding{n'}.\pra{-P(n')}]$
+\end{itemize}
+  
+ただし、$\unify{3}{4}$の計算は次の通り。
+
+\begin{eqnarray}
+\unify{3}{4} &\equiv& \binding{n,n'}.\unify{-P(n)}{+P(n'+2)}\pra{-P(n')}\\
+&=&\binding{n,n'}.\tuple{n'+2,n'} [\binding{n'}.\pra{-P(n')}]
+\end{eqnarray}
+
+このようにpraは、resolveする相手が決まっていない状態を示す。
+
+\subsubsection{証明の試行シーケンス}
+clauseの集合$\mathcal{A}$には上記4つしか$Lpairs$が存在せず、
+証明のトライアルをLpairのシーケンスで表現することができる。
+
+証明の試行は、$\unify{L_1}{R_1}=\sigma_1,\unify{L_2}{R_2}=\sigma_2,\dots,\unify{L_k}{R_k}=\Fail,\unify{L_{k+1}}{R_{k+1}}=\sigma_{k+1},\dots$
+のようなシーケンスで表記される。
+
+
+
+\section{今後の課題}
+
+\subsubsection{証明の試行シーケンスの特徴}
+可能な証明のすべての構造をとらえたい。
+
+成功した証明だけだと、resolutionに失敗したpairingの情報が失われ、つまり、
+最初のグラフにある対称性が失われてしまう。
+
+試行シーケンスには、元のグラフの対称性が残っていて、全証明のガイド(キュレーション)を
+行うのに必要な情報が得られるのではないかと思う(今後の検討が必要)
+
+\subsection{有限性について}
+これまで、与えられたclauseは有限個であるという条件をつけてきたが、
+clauseが動的に増減する場合、この条件は一般的には成り立たない。
+
+各時点におけるclauseは有限であり、literalや述語記号も有限である。
+
+すべての証明を考えると、有限だと考えられなくなる。
+
+\end{document}
