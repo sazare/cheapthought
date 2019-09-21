@@ -1,0 +1,72 @@
+\documentclass[10pt, onecolumn]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{モデルについて}
+\author{\myname}
+\date{}					% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{概要}
+証明が1つできると、それを構成するmguは、入力clausesの中のどれかのliteral のpair である。
+
+すべての述語は、このmguによってinstance化され、それが述語($P$)に対応するモデル($\mathsf{P}$)を決める。
+
+各$\Contra$の証明(反証)木にぶらさがるリテラルは、それのペアから作成されるmguによって、すべて入力リテラルのインスタンスになる。
+
+複数のリテラルからなるclauseは、単独の述語のモデルではなく、複数の述語のモデルをまとめ、加えて制約条件を不可されたものになる。
+
+そのモデルに属する2つの述語のモデルがどのような関係にあるのかは、制約条件によって決まるが、変数を含まず、ground termのみの構成物であり、制約条件はそのモデル全体を制約するだけで、同等の他の制約条件もありうる。
+
+cluaseの集合+goalがどのようなモデルを規定しているのかが、このメモにおける関心事である。
+
+clauseはliteralをorで繋ぐので、個々のリテラルのモデルの和集合+制約条件になるだろう。
+述語の引数の数や、clauseに出現するliteralの数によって形がかわる。
+
+clauseの集合のモデルは、個々のclauseのモデルの共通部分になるかもしれない。
+clauseのモデルに様々な形があるので、共通部分といっても何になるのかは難しい。
+
+単純な集合と冪集合の和の集合がclauseのモデルだとすると、
+そういうものの共通部分は、全リテラルのモデルの共通部分でよいようにも思え
+だとするとclauseの和集合の関係が謎になる。
+
+さらに考える必要がある
+
+
+述語は複数の引数を持つものがあるので、モデルは$\{\mathsf{P} \times D^n\}$のような形になると考えられて、これに制約条件$\phi$をつけて
+$$\{(P, t_1,t_2,\dots) : P \in \mathsf{P}, t_i \in H, \phi(\bar{H})\}$$
+となるだろう。
+
+本当かな??
+
+
+%\subsection{定義}
+%\include{"definition"}
+
+\section{今後の課題}
+\subsection{より妥当なモデルの定義}
+ここで考えているモデルは不十分であり、本当にモデルとして使えるのかどうかわからない。
+
+もっと考える必要がある。
+
+\end{document}

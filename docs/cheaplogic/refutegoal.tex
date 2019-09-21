@@ -1,0 +1,211 @@
+\documentclass[10pt, onecolumn]{jarticle}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+
+\usepackage[all]{xy}
+\usepackage{enumerate}
+\usepackage{version}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cases}
+
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\include{"texdefinition"}
+
+\title{Ask Viewを含むgoal指向refutation}
+\author{\myname}
+\date{20190608}					% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{概要}
+Viewを用いたrefutaionの考察。
+
+簡潔に書いた場合しか考えていないので、発散する例もかけるとは思う。
+
+現実世界との関係を書こうとしたとき、自然であり発散するものはあるのだろうか?
+
+この3つの手順を繰り返してgoalを[]にしていくことを考える。
+
+\begin{enumerate}
+\item evaluation
+\item InferIt
+\item ask you
+\end{enumerate}
+
+
+・今の実験では、Viewで入力した値は直接代入$\sigma_o$にしてgoalの残りに適用するので
+Fact としては残していない。
+Fact literalを作っておくとproofに残るというメリットはある。
+
+\section{evaluation}
+ground literalをJuliaの式として評価しfalseになれば、goalから削除する。
+
+trueになれば、goalのrefuteが不可能なので、そこで中断してよい。
+
+trueでもfalseでもない値であるとか、評価自体が失敗したならば、そのliteralはそのまま残す。
+(現在は、この場合例外 :FAILを投げている。それで正しいのかどうか要検討)
+
+ 自然な帰結として、このようなliteralはground literalである。
+ 手続きとしては、groundかどうかをチェックしてからevalすると例外が発生しなくてよいのだが
+ 直接evaluateするほうが高速だと思うので、ground checkは不要とした。
+
+\subsection{Procリテラルの扱い}
+現在の実装では、実行可能なliteralはCORE.Procに関数定義を書くことにしている。
+また、Proc literalはresolutionやViewによる評価の対象外でよいと考えているので
+Porcリテラルだけを集めたBranchというliteralの集合が考えられる。
+このBranchは最後までにすべてevaluationによって消滅させなくてはならない。
+同じ事だがBranchの要素のliteralは、evaluationによって最後まで消去できなければ
+goalのrefutationに失敗するということである。
+
+もしもPorc以外のliteralがすべて消えて、evaluateしたとき、trueにもfalseにもならない
+場合、その式に含まれる変数の解を求めればよいのかもしれない。
+
+\subsection{Proc literalのopposite}
+literal Lの述語記号 P について、グラフで反対の符号のPにノードが繋がっていた場合
+それは分岐の別の側の話なのでresolutionの対象にならない。
+
+
+\section{Viewによる解決; Ask You}
+ これは、goalのliteralをcoreでは消せないとき、Viewで外部にいる人間に問い合わせるというもの。
+ 
+特に、外部が人間の場合の例になっている。
+一般的にAIプログラムが世界に対する判断をこのような形式で行うことも考えられる。
+それは難しいので第一歩として考えている。
+
+\subsection{oppositeについて}
+ この処理は、グラフでgoal literalのpsymのoppositeにぶら下がるノードがあれば実行できる。
+ 
+ oppositeにぶら下がるノードがあっても実行して悪いわけではないとも思う。
+それは例えば、人間の入力と推論による値のクロスチェックの意味がある。
+
+今はこの2つしか方法がないが、いくつかの方法でliteralを消去し、相互に矛盾がないか確認する
+方法もある。
+
+
+\section{inferIt}
+ これは、goalのliteralをcoreのbaseを用い、resolutionで消すという方法である。
+ resolution refutationの普通の方法である。
+
+グラフで考えると、goalのpsymのopponentにぶら下がるノードがあれば実行できる。
+なければViewを使って消去するしかない。
+
+ここまでで、1つのgoal(clause)は、次の3つの部分に分けられる。
+\begin{equation*}
+GOAL = (Rule, View, Branch)
+\end{equation*}
+
+\subsection{いくつか問題}
+\subsubsection{oppositeの数}
+\begin{description}
+\item[ oppositeの数] ぶらさがるノードの中で1つだけが適用可能なら、安心してresolutionしてみればよいがそうでない場合もありうる。
+\item[ goalのliteral数] resolutionでglitを消すと、goalのliteralが増える場合もある。
+\item[ goalの数] oppositeが複数のnodeである場合は、それぞれについて新しいgoalが生成されうる。
+複数のgoalを許すかどうかなど検討の余地がある。
+\item[ 証明制御 ]あるgoalのrefuteに失敗した場合、バックトラックして別のgoalを試す(Depth first)かひととおりの新goalを作っておいて、順番にトライしていくか(breadth first)
+\item[ goalの優先方法]複数のgoalがあったとき、refuteできそうなgoalを優先して行う。という方法もあるかも。
+そのとき、「refuteできそうな」の評価方法は?
+\item[一般的な手順]
+(literalが増えたとき、)ground literalでevaluateできるものがあれば、減らせる。
+
+グラフにoppositeがないliteralがあればaskyouで値を求める。
+\end{description}
+
+\subsubsection{どのliteralから消していくか}
+未稿
+\subsubsection{viewとresoの両方が可能の場合}
+消す方法は、viewにすべきかresolutionにすべきか。
+
+判断基準はoppositeのリテラルの状態とclauseの状態が材料になりそう。
+
+\section{一番簡単な場合}
+
+oppositがground unit clauseでunifiable
+　
+oppositがunit clauseでunifiable
+
+
+そういうものが複数あったらどうなるか。
+\begin{description}
+\item[ a)]groundの場合、unifiableなら同一のliteralということなので
+そのliteralはviewにしても意味がない(つまりconfirmしか得られない)
+だから、そのliteralについてはresolutionしか必要ない。
+\item[ b)] 変数があるときは、標準形の変数が減るようなlitralがあったら
+resolutionは有望かもしれない。
+resolventができたときのlitral数は少ないにこしたことはないが
+evalで消えるものなら数えなくていい。
+\end{description}
+
+\subsection{評価基準案}
+\begin{description}
+\item[ 案1] 式に含まれる変数の数をみて、0に近いものはgroundに近いとする。
+\item[ 案2] Canonicalを情報1とし、ground clauseはすべて0とするのもある。\\
+    これを$<:>$で評価できるか??\\
+    空代入$φ$は$<P^c:P^c>=<P_g:P_g>=φ$\\
+$P_g$はgroundliteralであり、同じliteralの場合\\
+ground literalは異なるものがいろいろあり、\\
+    $<P_{g_1}:P_{g_1}>$は常に$φ$であり(これはなんでもこう)\\
+    $<P_{g_1}:P_{g_2}>$は失敗する。\\
+\end{description}
+
+補足) 何かリテラルPが与えられたとき、
+$<P^c:P> = φは必ず存在する。$\\
+この$φ$の形によって、$[]$に近いかどうかを判定できないか??
+
+\section{付録: Webアプリのコードの構造}
+ この考え方はよいのだがコードについて。\\
+ literalからPageのhtmlを作り、そのurlをBrowserで開いて
+人間が入力し、confirmすると別のurlでその値を受け取る。
+
+htmlを作るところと、値を受け取るところは、同じ計算環境(session)
+だが、計算のブロックとしては別になってしまう。
+
+このような位相のπ/2のずれのようなことをわかりやすい形で記述できないか。
+htmlの前と後で分けた時、一連の処理なのにもかかわらず計算が
+分割されてしまう。
+
+schemeかlispで何かフレームワークがあったような気がする。
+具体的には知らないので、すこし考えてみよう。
+
+\subsection{そのほかの問題}
+
+\subsubsection{resolutionとaskyouの順番}
+  removebyevaluation()はgroundに対してしか行われないので、この2つとは独立
+resolutionとaskyouの場合、どちらも変数をinstance化していく。
+
+resolutionでいくつかの変数に定数が入った後にaskyouをすると、
+わかっている項目に初期値が入るようなことに対応して、おもしろい
+
+しかし、人間に聞いてわかることであれば、askyouで変数の値を決めて
+おけば無駄にresolutionしなくてもよい。つまり、resolutionを効率よく適用
+できたり、resolutionを回避できたりする。
+
+
+\section{付録: 3つのタイプのliteralに対するoppositeについて}
+proc literalは対literalがoppositeにあっても、分岐条件なのでresolutionする必要がない。
+それは+P(x)と-P(x)のモデルが共有されないということ。つまり同じxが両方の
+clauseで存在できないので、resolutionする意味がない。ということではないか。
+
+resolutionするときliteralを消せるのは、共通のxのモデルがあるからなのではないか。
+
+分岐では、それらのliteralには
+\begin{enumerate}
+\item 共通のモデルがない\\
+という条件を前提としていて、executableというのはまさにそういういみのような気がする。
+現実世界で、$p(x)かつ\neg p(x)$がないのだから、resolutionには意味がないということ。
+\end{enumerate}
+
+resolutionでは形式的にでもそのようなxがあるとして、そのxの値で矛盾すると言っている。
+しかしそのようなxが存在できないのなら、p$p(x)かつ\neg p(x)$で分けてrefuteすればよい。
+・・・というようなことか。よくわからない。
+
+\end{document}
