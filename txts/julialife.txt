@@ -1,0 +1,125 @@
+Julia my life at rundom
+
+1. 私のjuliaの使い方。terminalとvimを使う。ideは使っていない。
+ 0) terminalをいくつかひらいて
+ 1) julia 実行
+ 2) jlファイルのディレクトリでvimでファイルを修正
+ 3) docsディレクトリで作業ログを書く(devlog)
+
+2. デバッグ
+ 1) @showをprintfのかわりにつかう
+ 2) ある程度動くようになったら@showを@infoとかに変えたりもしたが、デバッグは@showのほうがわかりやすそう
+ 3) packageのDebuggerを使う
+   Pkg]で add Debugger
+   > using Debugger
+   > @enter 式
+       ?でコマンドがわかるので、デバッグする。
+
+3. ソースの書き方
+ # はコメント
+
+ #==
+  複数業のコメント
+ ==#
+ 
+ helpの書き方。 関数定義の前に
+ """
+ 関数の説明
+ """
+ function something()
+# definition here 
+ end
+ 
+ こう書くと
+ REPLで
+ ?something
+ としたとき
+ 関数の説明
+ が表示される。
+ 
+ 4. REPLの使い方
+  1) ヘルプ
+    julia> ?名前
+  で、その名前のドキュメントがあれば、それが表示される。
+  
+  2) 一度実行した行をもう一度使いたいときは、その行の先頭部分を入力し、^p(emcsキーバインドや上むき矢印を打つと、それに一致する行が表示され、改行で実行できる。
+  その行は、編集して実行することもできる。
+  
+  何も入力せずに^pをすると、前の行が表示される。
+  
+ 2) 1.0以降は、packageの処理は、julia>で ] を入力したときにPackageのモードにかわる。
+  そこでよくやるバターン
+   (v1.2) pkg> ?
+   (v1.2) pkg> status
+   (v1.2) pkg> add パッケージ
+   (v1.2) pkg> build {パッケージ}
+   (v1.2) pkg> update パッケージ
+   などなど
+   戻るときは、delete
+   
+   3) シェルの実行
+   julia> ;コマンド
+   とするとプロンプトがかわって、shellモードになるので、そのままコマンドを入力するとshellで実行してくれる。
+   julia> ;
+   で
+   shell>
+   にかわり、そのままコマンドを入力する。
+   
+   ;ls
+   ;pwd
+   ;sh
+   
+   などをよく使う。pwdについては、juliaには pwd()という関数があるのでそれも使えるが、こちらのほうがタイプ数が少なくなるし応用が効くから好きなのだろう。
+   
+   juliaにはls()という関数はないので、メモリ上の関数をリストアップするls()を自作した。
+   ls(パターン)も。
+   juliaにはapropos(string)があるので、それも使えるかもしれない。
+   
+   ただし、; では、ワイルドカードは使えない。つまり
+   ;ls *jl
+   としても * が展開されないので
+   ls: *.jl: No such file or directory
+   となる。
+   
+   
+   5. ソースファイルの構成
+    ModuleやPackageは作っていないので、単純な構成のみ。
+    プログラムのファイルは拡張子 jlで作成する。
+    REPL環境に読み込むのは
+     julia> include("ファイル名")
+     
+     複数のjlがある場合は、load_xxxx.jl を作り、その中でincludeを実行
+     julia> include("load_xxxx.jl")
+     
+     load_xxxx.jlの最後に
+     println("load_xxxx.jl done")
+     とか書いておくとどこまで進んだかわかるのでよいと思う。
+     
+   6. テスト
+   Juliaには、Test用のパッケージがある。
+   
+   using Test
+   @testset "名前1" begin
+     @test 式1
+     @test 式2
+  end
+  
+   と書いたファイルを作り、includeすればよい。
+   @testのあとは式を書くので、
+   @test 予想値 == 式
+   というパターンになることも多い。
+  @testマクロはいろいろあるので、helpやマニュアルで確認すること。
+  
+   @test_throws 例外が投げられたかどうかをテスト
+   @test_skip そのテストをスキップする(testの結果表示にその旨表示される)
+   @test 1.3 ≈ fun() で、実数の比較。(昔はtest_approx_eqとかいうのがあった)
+   などなど
+   
+   
+
+ 
+ 
+ 
+ 
+ 
+ 
