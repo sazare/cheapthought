@@ -2,6 +2,7 @@ Julia my life at rundom
 0. juliaのマニュアルには必要なことが書かれているので読むべき。
 　とはいえversionが変わると内容がかわるため、私自身は今のマニュアルを
 　すべて読んでいるわけではない。
+
 0.1 julia起動時に実行するスクリプト: ~/.juliarc.jl に書く
  LOAD_PATHに"."を追加している。
  push!(LOAD_PATH, ".")
@@ -17,41 +18,38 @@ Julia my life at rundom
  
  4) ソースの構成。
  　あるディレクトリ直下に、jlとtest*.jlとload*.jlをまとめておいている。
- 　テストではない、サンプル用のデータはdataディレクトリにおいている。
+ 　テストではない、サンプル/デモ用のデータはdataディレクトリにおいている。
  　data/rundata.jlがそのデータ全部を実行する(simpleproverの呼び出し)
  　viewproverはdvcreso系と違う部分だけをおいている。
  　ほぼ共通のソースファイルは、最初はファイル単位でコピーして修正していた
  が、あるていど進んだ段階で違う部分だけにした。viewproverとsimpleproverを
- 同じ環境で使うことはまずない。viewproverはGenieのループがまわるので。
+ 同じ環境で使うことはない。viewproverはGenieのループがまわるので。
  
 　オリジナルのcheaplogic、viewproverなどはload_xxx.jlを作って必要な
+ファイルだけをincludeしている。
 
-5) config.jlでglobalな変数の設定をしている。たとえばevalonなど
+5) config.jlでglobalな変数の設定をしている。たとえばevalonなど。
  
-1.1 Jupyter notebookは、数年前にはよく使っていた。literate programmingに
-　近いので。
-　今は、人に説明する段階ではないので、その目的で使わなくなったら、notebookには
+1.1 Jupyter notebookは、数年前にはよく使っていた。literate programmingに近いので。
+　今は、人に説明する段階ではないので、その目的で使わなくなったから、notebookには
 　していない。
-　文書が多くなると、自分でもわからなくなるのと、いろいろなアイデアがでてきて
-　さらにわからなくなってきた。
+　もっと直接的な理由は、文書が多くなり、自分でもわからなくなってきたのと、いろいろなアイデアがでてきてさらにわからなくなってきたからだろう。
 
 1.2  JuliaBoxを使う
-  JuliaBoxは無料版を使っていたが、10月いっぱいでなくなるというので、有料に変更した。
+  JuliaBoxは無料版を使っていたが、10月いっぱい(2019年)でなくなるというので、有料に変更した。
   1500円/月が有益になるように、使い方を考え中。
   githubのcloneをJuliaBoxの中(ディレクトリとして)に持てる。
   JuliaBoxのimport/exportでpull/pushができるから、githubのjuliaboxブランチと
   つないで、開発もできる。
   
   githubではSSHキーを使っていたので、これをJuliaBoxと合わせないとcloneできなかった。
-  gitlabはhttpsでアクセスするようにしているが、同じSSHキーでいけるのか?
- 
+  gitlabはhttpsでアクセスするようにしているが、同じSSHキーでいけるのか? いけるような気がする。
  
 2. デバッグ
  1) @showをprintfのかわりにつかう
+ 　　ある程度動くようになったら@showを@infoとかに変えたりもしたが、デバッグは@showのほうがわかりやすい。
  
- 2) ある程度動くようになったら@showを@infoとかに変えたりもしたが、デバッグは@showのほうがわかりやすい。
- 
- 3) packageのDebuggerを使う。(julia1.2からでないと使えないのかも)
+ 2) packageのDebuggerを使う。(julia1.2からでないと使えないのかも)
    Pkg]で add Debugger
    > using Debugger
    > @enter 式
@@ -78,13 +76,14 @@ Julia my life at rundom
  としたとき
  関数の説明
  が表示される。
- macroやstructも同じではないか?
+ macroやstructも同じだったと思う。
  
  4. REPLの使い方
   1) ヘルプ
     julia> ?名前
   で、その名前のドキュメントがあれば、それが表示される。
-  
+   COMMONLISPのように、apropos()という関数もある。こちらはpackage名がついてきたりするので、ちょっと手がかかる。  
+
   2) 一度実行した行をもう一度使いたいときは、その行の先頭部分を入力し、^p(emcsキーバインドや上むき矢印を打つと、それに一致する行だけが順番に表示され、表示されたあと改行で実行できる。
   その行は、矢印キーや^f/^bで移動し編集して実行することもできる。
   
@@ -114,15 +113,9 @@ Julia my life at rundom
    
    などをよく使う。pwdについては、juliaには pwd()という関数があるのでそれも使えるが、こちらのほうがタイプ数が少なくなるし応用が効くから好きなのだろう。
    
-   macOS Catalinaからはでふぉるとシェルがzshになったのでzshがよいかも。
-   でも他のshと区別がつかないのはまずいかも。
+   macOS Catalinaからはデフォルトシェルがzshになったので、;shとするとzshが起動する。
+   OS側でshellを変えればかわるのだろう。
    ちなみに、zshはタイプの指遣いがちょっと難しい。bashは1文字多いが簡単。
-   shは実態はzshで、promptがsh-3.2となり区別がつくので、shでよさそう。
-   
-   
-   juliaにはls()という関数はないので、メモリ上の関数をリストアップするls()を自作した。
-   ls(パターン)も。
-   juliaにはapropos(string)があるので、それも使えるかもしれない。
    
    ただし、; では、ワイルドカードは使えない。つまり
    ;ls *jl
@@ -130,7 +123,10 @@ Julia my life at rundom
    ls: *.jl: No such file or directory
    となる。
    
+   3)   juliaにはls()という関数はないので、メモリ上の関数をリストアップするls()を自作した。
+   ls(パターン)も。apropos()だと関数名のリストが関数の値としては帰ってこないので、ls()には価値があるかな。
    
+  
    5. ソースファイルの構成
     ModuleやPackageは作っていないので、単純な構成のみ。
     プログラムのファイルは拡張子 jlで作成する。
@@ -165,10 +161,6 @@ Julia my life at rundom
    などなど
    
    
-
- 
- 
- 
  
  
  
