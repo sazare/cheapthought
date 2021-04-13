@@ -1,0 +1,593 @@
+https://stackoverflow.com/questions/38337635/instance-of-value-type-in-julia
+
+Valuetypeでdispatchするメリットはなにか?
+1. コード上からif文をけせる?
+2. dispatchのほうが高速??
+
+
+struct Val{v}; end
+Val(x)=Val{x}()
+
+checker(x::Int) = false
+checker(x::3) = true
+
+julia> checker{N}(x::Val{N}) =false
+ERROR: UndefVarError: N not defined
+Stacktrace:
+ [1] top-level scope at REPL[38]:1
+ 
+checker(::Val{Any}) = false
+julia> checker(Val(4))
+ERROR: MethodError: no method matching checker(::Val{4})
+Closest candidates are:
+  checker(::Val{Any}) at REPL[43]:1
+  checker(::Int64) at REPL[34]:1
+  checker(::Val{3}) at REPL[30]:1
+Stacktrace:
+ [1] top-level scope at REPL[47]:1
+
+julia> checker(::Val{Int}) = false
+checker (generic function with 4 methods)
+
+julia> checker(Val(4))
+ERROR: MethodError: no method matching checker(::Val{4})
+Closest candidates are:
+  checker(::Val{Int64}) at REPL[48]:1
+  checker(::Val{Any}) at REPL[43]:1
+  checker(::Int64) at REPL[34]:1
+  ...
+Stacktrace:
+ [1] top-level scope at REPL[49]:1
+
+ただし
+checker(::Val{3}) = true
+
+
+引用では
+checker{N}(::Type{Val{N}}) =false
+
+だが
+julia> checker{N}(::Type{Val{N}}) =false
+ERROR: UndefVarError: N not defined
+Stacktrace:
+ [1] top-level scope at REPL[53]:1
+
+だから
+checker(::Type{Val{Int}}) = false
+
+julia のtest/core.jlにValのテストがある(valuetypeのテスト)
+
+valuetypeの目的は何か?
+
+#しきりなおし
+Val{}とかVal(c)はすでに定義されていた
+
+help?> Val
+search: Val values valtype eval evalfile @eval isvalid @evalpoly
+
+  Val(c)
+
+  Return Val{c}(), which contains no run-time data. Types like this can be used
+  to pass the information between functions through the value c, which must be
+  an isbits value. The intent of this construct is to be able to dispatch on
+  constants directly (at compile time) without having to test the value of the
+  constant at run time.
+  
+    Examples
+  ≡≡≡≡≡≡≡≡≡≡
+
+  julia> f(::Val{true}) = "Good"
+  f (generic function with 1 method)
+  
+  julia> f(::Val{false}) = "Bad"
+  f (generic function with 2 methods)
+  
+  julia> f(Val(true))
+  "Good"
+  
+  さて
+  julia> f(Val(true))
+"Good"
+
+julia> ggg=true
+true
+
+julia> f(Val(ggg))
+"Good"
+
+julia> yyy=false
+false
+
+julia> f(Val(yyy))
+"Bad"
+
+では
+g(::Val{1}) = :one
+g(::Val{2}) = :two
+
+julia> g(Val(2))
+:two
+
+julia> try g(Val(3));catch e println(:other) end
+other
+
+こんなことがしたいのだろうか??
+
+Val{3}はVal{Int}には含まれない。3とIntの型は違うので
+
+3 isa Int
+ではあるが
+3のsingletonはいいが、それと比較するIntは
+Val{3} isa Int
+でも
+Val(3) isa Int
+でもない
+
+Val(3)以外のものはどう表現できるのか
+Valを考えるとき、Intの中の3以外というものは考えないのか
+Any>T>3みたいな
+
+Val{Any}は違う
+
+julia> g(Val(1))
+:one
+
+julia> g(Val(2))
+:two
+
+julia> g(::Any) = :other
+g (generic function with 3 methods)
+
+julia> g(Val(4))
+:other
+
+julia> g("abc")
+:other
+
+そういえば型Tに対してTではない型というのは定義できないのか
+
+
+■Unionはどうなのか
+julia> UU = Union{Val{2}, Val{3}}
+Union{Val{2}, Val{3}}
+
+julia> k(::UU) = :other
+k (generic function with 1 method)
+
+
+julia> k(::Val{1})=:one
+k (generic function with 2 methods)
+
+julia> k(::Val{2})=:two
+k (generic function with 3 methods)
+
+
+julia> k(Val(1))
+:one
+
+julia> k(Val(2))
+:two
+
+julia> k(Val(3))
+:other
+
+julia> k(Val(13))
+ERROR: MethodError: no method matching k(::Val{13})
+Closest candidates are:
+  k(::Val{2}) at REPL[54]:1
+  k(::Val{1}) at REPL[53]:1
+  k(::Union{Val{2}, Val{3}}) at REPL[60]:1
+Stacktrace:
+ [1] top-level scope at REPL[62]:1
+
+
+
+■Val
+help?> Val
+search: Val values valtype eval evalfile @eval isvalid @evalpoly
+
+  Val(c)
+
+  Return Val{c}(), which contains no run-time data. Types like this can be used
+  to pass the information between functions through the value c, which must be
+  an isbits value. The intent of this construct is to be able to dispatch on
+  constants directly (at compile time) without having to test the value of the
+  constant at run time.
+
+  Examples
+  ≡≡≡≡≡≡≡≡≡≡
+
+  julia> f(::Val{true}) = "Good"
+  f (generic function with 1 method)
+  
+  julia> f(::Val{false}) = "Bad"
+  f (generic function with 2 methods)
+  
+  julia> f(Val(true))
+  "Good"
+
+help?> isbits
+search: isbits isbitstype disable_sigint
+
+  isbits(x)
+
+  Return true if x is an instance of an isbitstype type.
+
+help?> isbitstype
+search: isbitstype
+
+  isbitstype(T)
+
+  Return true if type T is a "plain data" type, meaning it is immutable and
+  contains no references to other values, only primitive types and other
+  isbitstype types. Typical examples are numeric types such as UInt8, Float64,
+  and Complex{Float64}. This category of types is significant since they are
+  valid as type parameters, may not track isdefined / isassigned status, and
+  have a defined layout that is compatible with C.
+
+  Examples
+  ≡≡≡≡≡≡≡≡≡≡
+
+  julia> isbitstype(Complex{Float64})
+  true
+  
+  julia> isbitstype(Complex)
+  false
+
+julia> 
+
+☕️ Abstract Typeだとfalseになるのか・・・
+
+testのコメントをみると、元々は
+👌https://github.com/JuliaLang/julia/pull/9452
+👌 https://github.com/JuliaLang/julia/pull/22475
+
+
+👍https://discourse.julialang.org/t/correct-way-of-using-value-type-argument/19239
+
+👍 https://stackoverflow.com/questions/38337635/instance-of-value-type-in-julia
+
+■確認
+julia> typeof(Val{2})
+DataType
+
+julia> typeof(Val(2))
+Val{2}
+
+julia> 2 isa Val(2)
+ERROR: TypeError: in isa, expected Type, got Val{2}
+Stacktrace:
+ [1] top-level scope at REPL[3]:1
+
+julia> Val(2) isa Val{2}
+true
+
+
+julia> 2 isa Val{2}
+false
+
+これは自明
+
+■Typeはなに?
+julia> p(::Type{Val{x}} where x)= println(:myval)
+p (generic function with 1 method)
+
+?? whereの意味がよくわからないけど
+
+julia> p(Val(3))
+ERROR: MethodError: no method matching p(::Val{3})
+Closest candidates are:
+  p(::Type{Val{x}} where x) at REPL[13]:1
+Stacktrace:
+ [1] top-level scope at REPL[14]:1
+
+julia> p(Val{3})
+myval
+
+Val{3}はdatatype
+
+julia> p(Val{1}) = :one
+ERROR: syntax: "Val{1}" is not a valid function argument name
+Stacktrace:
+ [1] top-level scope at REPL[17]:1
+
+julia> p(::Val{1}) = :one
+p (generic function with 2 methods)
+
+julia> p(1)
+ERROR: MethodError: no method matching p(::Int64)
+Closest candidates are:
+  p(::Val{1}) at REPL[18]:1
+  p(::Type{Val{x}} where x) at REPL[13]:1
+Stacktrace:
+ [1] top-level scope at REPL[19]:1
+
+
+わからん。かすめているがわからない
+
+
+■ 以下だめ
+
+Val{4}を定義して、
+fc(::Type{Val{4}}) = println("four")
+fc(::Type{Val{5}}) = println("five")
+と定義して
+fc(4)
+fc(5)
+fc(1)
+と呼び出すとみんなotherになる
+
+fdfo=Type{Val{4}}
+fdfi=Type{Val{5}}
+
+fd(fdfo) = println("four")
+fd(fdfi) = println("five")
+
+julia> fd(4)
+five
+
+julia> fd(5)
+five
+
+julia> fd(8)
+five
+
+なんだこれは
+
+fd2(::fdfo)=println("4")
+fd2(::fdfi)=println("5")
+
+
+fdd(Val(5))=println("v5")
+
+
+[tenfu2tea]
+abstract type TheSign end
+struct Negative <: TheSign end
+struct NonNegative <: TheSign end
+
+thesign(x) = x < zero(x) ? Negative() : NonNegative()
+
+say_thesign(x) = say_thesign(thesign(x), x)
+say_thesign(::Negative, x) = "$x は負です"
+say_thesign(::NonNegative, x) = "$x は非負です"
+
+[modify by me]
+abstract type TheSign end
+struct Negative <: TheSign end
+struct NonNegative <: TheSign end
+
+isNegative(x)=x<zero(x)
+isNonNegative(x)=x>=zero(x)
+
+NNN(x)=(x<0)&&Negative()
+PPP(x) = !(x<0)&NonNegative()
+
+saysss(x)=sss(NNN(x))
+saysss(x)=sss(PPP(x))
+
+sss(::Negative)="negative"
+sss(::NonNegative)="nonnega"
+sss(::Any)="other"
+
+saysss(-1)
+saysss(0)
+saysss(3)
+
+sayss2(x) = sss(Val{x})
+sss(Type{Negative} )= "Neg"
+sss(Type{NonNegative}) = "NNeg"
+
+saysss2(-1)
+saysss2(0)
+saysss2(3)
+
+sayss3(x) = sss3(Type{x})
+sss3(Type{Negative} )= "Neg"
+sss3(Type{NonNegative}) = "NNeg"
+
+うまくいかないような
+
+知りたいことは
+method dispatch を使ってif-then-elseを亡き者にできるか
+
+つまり、値についての条件から型を作り出し
+それでmethod dispatchするということができるか
+
+値についての条件から型を作るところでif-then-elseを使ったらだめ。
+それも使わないでできないかということ。
+
+分岐は言語の機能(method dispatch)だけでまかなうということ。
+わざわざ値のことを型の世界にもっていって判定させるという無駄はあるので
+現実的ではないような気がするので、これはただの好奇心。
+
+ただのパズルなので
+できないのならその理由がわかるとうれしい
+
+----
+まず、値からそれのsingletonの型を作るのはVal
+Val(3) isa Val{3}
+実際は、
+3 => Val{3} => Val{3}() == Val(3)
+なので、ひとまわりしてきている。
+それでも、Val(n) は3=>Val{3}()を作るので値の間の関数になっている。
+
+とはいえ
+vv(n) = Val(n) isa Val{n}
+とうぜん
+@test vv(n) == true
+
+
+やりたいことはこうのはず
+ 
+ground1(x) = if x == 0;"zero" elseif x==1;"one" else "other" end
+ground2(x) = if x < 0;"neg" elseif x==0;"zero" else "pos" end
+
+# shifted(x)はif-then-elseを使わない定義になっている
+
+@test shifted(x) == ground(x)
+
+1)　値の場合
+shifted1(x) = shifted1a(Val(x))
+
+shifted1a(::Val{0}) = "zero"
+shifted1a(::Val{1}) = "one"
+shifted1a(::Any) = "other"
+
+2)　値の集合の場合
+Val(n)とVal(m)の比較ができない
+あるいは
+Val{x>0}みたいのが書けない。有限なら書ける。
+
+[Val{x} for x in 1:4]
+
+この中にある型が含まれるかどうか
+julia> from1to4=[Val{x} for x in 1:4]
+4-element Array{DataType,1}:
+ Val{1}
+ Val{2}
+ Val{3}
+ Val{4}
+
+julia> Val{2} in from1to4
+true
+
+julia> Val{10} in from1to4
+false
+できる。
+
+無限だとどうなるか
+
+###
+あらためて考えると、何ができればOKなのか
+つまり
+thesign(x) = x < zero(x) ? Negative() : NonNegative()
+
+Val{x<zero(x)}みたいなことがかければよいが、それは無理な気がする
+
+順番に計算していくようなことをすればできるのかも
+
+
+計算量は度外視して、if-then-elseを消せるかどうか
+
+
+の部分をmethod dispatchで書けるかどうかということか
+
+型が条件がtrueの値の集まりとして定義できるかどうか
+集まり=集合は、comprehensionか条件によるので
+有限集合なら、手間をいとわなければcomprehensionで
+julia> from1to4=[Val{x} for x in 1:4]
+4-element Array{DataType,1}:
+ Val{1}
+ Val{2}
+ Val{3}
+ Val{4}
+
+julia> Val{2} in from1to4
+true
+
+julia> Val{10} in from1to4
+false
+
+のように定義できる。
+f1to4(from1to4) = ...
+とすればmethod dispatchでかける。
+
+単に列挙してもよい。列ベクトルでも同様
+
+julia> todd1to5=[Val{1} Val{3} Val{5}]
+1×3 Array{DataType,2}:
+ Val{1}  Val{3}  Val{5}
+
+julia> Val{3} in todd1to5
+true
+
+julia> Val{4} in todd1to5
+false
+
+条件を指定する場合はどうか。
+たとえば
+n(x)=(x<0)
+を使って型が定義できるのか
+
+気持ちは
+[x for n(x)]
+
+型としては、
+[Val(x::Int) for n(x)]
+のような感じか
+
+これから型を作るとき、たぶんコンパイル時に判定できなくては
+ならなくて、型は静的でなくてはならないということだろう
+
+value typeも基本型(bit patternが決まるもの)しかだめなようだし・・・
+
+
+やりたいことがあるとすれば
+n => Val{n}
+であり
+p(n) => Val{p(n)}
+あるいは
+p(n) => Val{n->p(n)}
+
+n=> Val{n}はVal{}そのものではないか
+
+いやまてtraitではどうか
+isXXX(T) = n(T)&&T1()
+isXXX(T) = !n(T)&&T2()
+
+これだとisXXX()が二重定義になるので(型が同じ)無理
+
+値にもとづいて型を定義しようとすると、値を引数でもらう必要があり
+T(x)=>T1() かT2()ようになってほしいわけで、
+
+=========-
+tenfu2teaさんに教えてもらったtraitを使う方法
+Lirimyさんに教えてもらったvalue type
+
+疑問は、method dispatchを使ってif-then-elseの撲滅がどこまできるか。
+method dispatchでは、型による分岐をJuliaにまかせることで、コード上からある程度のif-then-elseを減らせている。
+classを使ったOOPにおいて、同じ名前のmethodを定義することで、if-then-elseを消しているが、あれもclass単位での撲滅でしかない。
+同じ型/クラスの値についてはif-then-elseはしろということか。なぜなら、同じ型についての分岐は必要だから・・・
+
+値から型を構成する方法に何があるか
+
+1. value type
+Val(3) isa Val{3}
+Val{n}もVal(n)もJuliaにある。
+
+2. comprehension
+todd1to5v=[Val{1}, Val{3}, Val{5}]
+とか
+from1to4=[Val{x} for x in 1:4]
+によって、型のベクトルは作れるので
+
+julia> Val{2} in from1to4
+true
+julia> Val{10} in from1to4
+false
+
+有限の値の集合に対する型は作れる(巨大な有限についてはリソース的に無理だとしても)
+
+3.型
+ tenfu2teaさんのx::UnsignedからNegativeにマップする方法。
+ 
+ 4. classやtypeにもとづく分岐の消滅とはどういう意味か。
+ 同じtypeのものについては自分で分岐しろということ
+ 
+ 同じclassについては自分で分岐しろということについては、Smalltalkの場合、multi inheritanceはないので、自然な気がする。
+ multi-inheritanceがでてくると、引数の複数の型/classによって型が組み合わせになってしまうので、自明とはいえない。
+ どこまで型によるdispatchをするかどうかというのは、言語が提供する枠組みとしての型による分岐が、ここの値のdispatchでは重要ではないはずということがあるような気がする。
+ 
+ Smalltalkで、引数があるときの扱いはもやっとしていて、引数の型による場合わけを書かなくてはいけなかったような気がする。
+ 
+ multi-inheritance(lisp関係。C++はよくしらない)でそこが型としてはっきりしたと思う。でも型の階層とか直積がややこしくなっているのは確か。
+ 値によるbranchは型によるbranchと本質的に違うということか。
+ 単に技術的なことでしかないのか。
+ 
+ #####
+ 
+ 
+ 
+ 
+

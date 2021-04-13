@@ -1,0 +1,30 @@
+(see the overview articles [Jouannaud and Kirchner 1991, Baader
+and Siekmann 1994] for this purpose).
+
+Jouannaud J.-P. and Kirchner C. [1991], Solving equations in abstract algebras: A rule-based
+survey of unication, in J.-L. Lassez and G. Plotkin, eds, 'Computational Logic: Essays in
+Honor of A. Robinson', MIT Press, Cambridge, MA.
+
+Baader F. and Siekmann J. H. [1994], Unication theory, in D. M. Gabbay, C. J. Hogger and
+J. A. Robinson, eds, 'Handbook of Logic in Articial Intelligence and Logic Programming',
+Oxford University Press, Oxford, UK, pp. 41{125.
+
+BAADER F.はたくさん論文書いているなと思ったら
+よくみれば、この論文の著者だからである。
+
+
+1.3. Approach
+
+Herbrand関係
+
+Herbrand J. [1930a], Recherches sur la Theorie de la Demonstration, Ph.D. thesis, Sorbonne,
+Paris. Reprinted in W. D. Goldfarb, editor, Logical Writings. Reidel, 1971.
+
+Herbrand J. [1930b], 'Recherches sur la theorie de la Demonstration', Travaux de la Societe des Sciences et des Lettres de Varsovie, Classe III 33(128).
+
+Herbrand J. [1967], Investigations in proof theory: The properties of true propositions, in J. van Heijenoort, ed., 'From Frege to Godel: A Source Book in Mathematical Logic, 1879{1931',
+Harvard University Press, Cambridge, MA, pp. 525{581.
+
+Herbrand J. [1971], Recherches sur la theorie de la demonstration, in W. D. Goldfarb, ed.,
+'Logical Writings', Reidel, Dordrecht.
+Hermann M. and Kolaitis P. G. [1996],

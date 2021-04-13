@@ -1,0 +1,22 @@
+20210220
+RDBとGround FOLの関係について考える
+
+RDBは、Relational DBということで、一階述語(FOL)と無関係ではないはず。
+RDBについて詳しくないので、疑問点はおいおい確認する。
+ここに書いているようなことは、RDBの教科書には書かれているのかもしれない。
+
+1. Tableはground unit clause(変数は含まない。項は定数のみ)
+2. Viewの定義は、and とかor (定義は変数を含む)
+3. SQL文には変数が書ける
+3.1 selectは、comprehensionで{(x,y)|P(x,y)}を求める操作になる。P(x,y)はTable。
+3.1.1 select y where Φ(x,y) は、{y | ∃xΦ(x,y)}かな
+3.2 joinは、P(x,y) and Q(x,y)
+3.3 not は、select x where not Φ(x)は、 {P(x)|¬Φ(x)}
+
+表、つまり上の述語Pは有限ドメインなので、条件∃xΦ(x)にせよ∀xΦ(x)にせよ、その評価は有限時間でおわる。
+
+FOLと違いSQL文は推論をするわけではない(?) 
+SQL文はなんらかの論理式(変数を含む)が対応し、その評価を行う。
+複数のSQL文からなる論理式がでてきたりするのだろうか。
+
+
